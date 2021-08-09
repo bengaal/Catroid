@@ -405,6 +405,8 @@ public class FormulaElement implements Serializable {
 				return interpretFunctionIndexOfItem(arguments.get(0), scope);
 			case FLATTEN:
 				return interpretFunctionFlatten(scope, leftChild);
+			case NUMBERS_FROM_TO:
+				return interpretFunctionNumbersFromTo(arguments.get(0), arguments.get(1), scope);
 			case COLLIDES_WITH_COLOR:
 				return booleanToDouble(new ColorCollisionDetection(scope, StageActivity.stageListener)
 						.tryInterpretFunctionTouchesColor(arguments.get(0)));
@@ -535,6 +537,12 @@ public class FormulaElement implements Serializable {
 
 	private static String interpretFunctionFlatten(Scope scope, FormulaElement leftChild) {
 		return interpretFunctionString(leftChild, scope);
+	}
+
+	private static String interpretFunctionNumbersFromTo(
+			Object from, Object to, Scope scope) {
+
+		return null;
 	}
 
 	private static String tryInterpretFunctionRegex(Scope scope, FormulaElement leftChild,
