@@ -130,7 +130,7 @@ class WriteVariableToFileAction : Action(), IntentListener {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getTargetIntent(): Intent {
         val fileName = getFileName()
-        val context = StageActivity.activeStageActivity.get()?.context
+        val context = StageActivity.activeStageActivity?.context
         val title = context?.getString(R.string.brick_write_variable_to_file_top) ?: ""
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             type = "*/*"

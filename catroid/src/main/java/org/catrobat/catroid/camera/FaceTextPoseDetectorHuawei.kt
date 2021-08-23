@@ -73,7 +73,7 @@ object FaceTextPoseDetectorHuawei : ImageAnalysis.Analyzer {
                     imageProxy.close()
                 }
             }.addOnFailureListener { e ->
-                val context = StageActivity.activeStageActivity.get()
+                val context = StageActivity.activeStageActivity
                 StageActivity.messageHandler.obtainMessage(
                     StageActivity.SHOW_TOAST,
                     arrayListOf(context?.getString(R.string.camera_error_text_detection))

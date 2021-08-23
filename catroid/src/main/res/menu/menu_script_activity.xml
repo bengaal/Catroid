@@ -33,6 +33,11 @@
         android:visible="false"/>
 
     <item
+        android:id="@+id/resume"
+        android:title="@string/resume"
+        android:enabled="false"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/backpack"
         android:visible="true"
         android:title="@string/backpack"

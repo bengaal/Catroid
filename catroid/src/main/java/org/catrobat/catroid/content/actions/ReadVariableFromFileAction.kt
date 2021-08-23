@@ -113,7 +113,7 @@ class ReadVariableFromFileAction : Action(), IntentListener {
     }
 
     private fun readUriContentAndWriteToVariable(uri: Uri) {
-        val contentResolver = StageActivity.activeStageActivity.get()?.contentResolver ?: return
+        val contentResolver = StageActivity.activeStageActivity?.contentResolver ?: return
         try {
             contentResolver.openInputStream(uri)?.use { inputStream ->
                 val reader = InputStreamReader(inputStream, "UTF-8")
@@ -126,7 +126,7 @@ class ReadVariableFromFileAction : Action(), IntentListener {
     }
 
     private fun deleteFileWithUri(uri: Uri) {
-        val context = StageActivity.activeStageActivity.get()?.context ?: return
+        val context = StageActivity.activeStageActivity?.context ?: return
         val file = DocumentFile.fromSingleUri(context, uri) ?: return
         if (!file.delete()) {
             Log.e(javaClass.simpleName, "Could not delete file which stores the variable content.")
@@ -135,7 +135,7 @@ class ReadVariableFromFileAction : Action(), IntentListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getTargetIntent(): Intent {
-        val context = StageActivity.activeStageActivity.get()?.context
+        val context = StageActivity.activeStageActivity?.context
         val title = context?.getString(R.string.brick_read_variable_from_file_top) ?: ""
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             type = "*/*"

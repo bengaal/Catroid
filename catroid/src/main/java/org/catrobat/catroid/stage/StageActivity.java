@@ -75,7 +75,6 @@ import org.catrobat.catroid.utils.ScreenValueHandler;
 import org.catrobat.catroid.utils.ToastUtil;
 import org.catrobat.catroid.utils.VibrationUtil;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -121,13 +120,15 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	public StageResourceHolder stageResourceHolder;
 	public CountingIdlingResource idlingResource = new CountingIdlingResource("StageActivity");
 	private PermissionRequestActivityExtension permissionRequestActivityExtension = new PermissionRequestActivityExtension();
-	public static WeakReference<StageActivity> activeStageActivity;
+	public static StageActivity activeStageActivity;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		StageLifeCycleController.stageCreate(this);
-		activeStageActivity = new WeakReference<>(this);
+		if(activeStageActivity == null) {
+			StageLifeCycleController.stageCreate(this);
+			activeStageActivity = this;
+		}
 	}
 
 	@Override
@@ -173,9 +174,8 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 
 	@Override
 	public void onResume() {
-		StageLifeCycleController.stageResume(this);
+		StageLifeCycleController.stageResume(activeStageActivity);
 		super.onResume();
-		activeStageActivity = new WeakReference<>(this);
 
 		if (surveyCampaign != null) {
 			surveyCampaign.startAppTime(this);
@@ -184,10 +184,15 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	}
 
 	@Override
+	protected void onStop() {
+		super.onStop();
+	}
+
+	@Override
 	protected void onDestroy() {
-		if (ProjectManager.getInstance().getCurrentProject() != null) {
+		/*if (ProjectManager.getInstance().getCurrentProject() != null) {
 			StageLifeCycleController.stageDestroy(this);
-		}
+		}*/
 		super.onDestroy();
 	}
 
@@ -224,7 +229,7 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	}
 
 	public boolean dialogIsShowing() {
-		return (stageDialog.isShowing() || brickDialogManager.dialogIsShowing());
+		return ((stageDialog != null && stageDialog.isShowing()) || brickDialogManager.dialogIsShowing());
 	}
 
 	private void showToastMessage(String message) {
@@ -290,7 +295,7 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 
 	public static CameraManager getActiveCameraManager() {
 		if (activeStageActivity != null) {
-			return activeStageActivity.get().cameraManager;
+			return activeStageActivity.cameraManager;
 		}
 		return null;
 	}
@@ -507,18 +512,19 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 
 	private static void startStageActivity(Activity activity) {
 		Intent intent = new Intent(activity, StageActivity.class);
+		intent = intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		activity.startActivityForResult(intent, StageActivity.REQUEST_START_STAGE);
 	}
 
 	public static void finishStage() {
-		StageActivity stageActivity = StageActivity.activeStageActivity.get();
+		StageActivity stageActivity = StageActivity.activeStageActivity;
 		if (stageActivity != null && !stageActivity.isFinishing()) {
 			stageActivity.finish();
 		}
 	}
 
 	public static void finishTestWithResult(TestResult testResult) {
-		StageActivity stageActivity = StageActivity.activeStageActivity.get();
+		StageActivity stageActivity = StageActivity.activeStageActivity;
 		if (stageActivity != null && !stageActivity.isFinishing()) {
 			Intent resultIntent = new Intent();
 			resultIntent.putExtra(TEST_RESULT_MESSAGE, testResult.getMessage());

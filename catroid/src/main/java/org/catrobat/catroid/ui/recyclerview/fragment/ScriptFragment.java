@@ -24,9 +24,12 @@ package org.catrobat.catroid.ui.recyclerview.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -60,6 +63,7 @@ import org.catrobat.catroid.io.StorageOperations;
 import org.catrobat.catroid.io.XstreamSerializer;
 import org.catrobat.catroid.io.asynctask.ProjectLoadTask;
 import org.catrobat.catroid.io.asynctask.ProjectSaver;
+import org.catrobat.catroid.stage.StageActivity;
 import org.catrobat.catroid.ui.BottomBar;
 import org.catrobat.catroid.ui.ScriptFinder;
 import org.catrobat.catroid.ui.SpriteActivity;
@@ -115,16 +119,17 @@ public class ScriptFragment extends ListFragment implements
 	private static final String SCRIPT_TAG = "scriptToFocus";
 
 	@Retention(RetentionPolicy.SOURCE)
-	@IntDef({NONE, BACKPACK, COPY, DELETE, COMMENT, CATBLOCKS})
+	@IntDef({NONE, RESUME, BACKPACK, COPY, DELETE, COMMENT, CATBLOCKS})
 	@interface ActionModeType {
 	}
 
 	private static final int NONE = 0;
-	private static final int BACKPACK = 1;
-	private static final int COPY = 2;
-	private static final int DELETE = 3;
-	private static final int COMMENT = 4;
-	private static final int CATBLOCKS = 5;
+	private static final int RESUME = 1;
+	private static final int BACKPACK = 2;
+	private static final int COPY = 3;
+	private static final int DELETE = 4;
+	private static final int COMMENT = 5;
+	private static final int CATBLOCKS = 6;
 
 	@ActionModeType
 	private int actionModeType = NONE;
@@ -188,6 +193,14 @@ public class ScriptFragment extends ListFragment implements
 		inflater.inflate(R.menu.context_menu, menu);
 
 		switch (actionModeType) {
+			case RESUME:
+				if(StageActivity.activeStageActivity != null)
+				{
+					Intent intent = new Intent(StageActivity.activeStageActivity, StageActivity.class);
+					intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					activity.startActivity(intent);
+				}
+				return false;
 			case BACKPACK:
 				adapter.setCheckBoxMode(BrickAdapter.SCRIPTS_ONLY);
 				mode.setTitle(getString(R.string.am_backpack));
@@ -424,10 +437,24 @@ public class ScriptFragment extends ListFragment implements
 		menu.findItem(R.id.rename).setVisible(false);
 		menu.findItem(R.id.catblocks_reorder_scripts).setVisible(false);
 		menu.findItem(R.id.find).setVisible(true);
+		setResumeMenuItem(menu.findItem(R.id.resume));
+
 		if (!BuildConfig.FEATURE_CATBLOCKS_ENABLED) {
 			menu.findItem(R.id.catblocks).setVisible(false);
 		}
 		super.onPrepareOptionsMenu(menu);
+	}
+
+	private void setResumeMenuItem(MenuItem menuItem) {
+		SpannableString title = new SpannableString(getString(R.string.resume));
+		if (StageActivity.activeStageActivity != null) {
+			title.setSpan(new ForegroundColorSpan(Color.WHITE), 0, title.length(), 0);
+			menuItem.setEnabled(true);
+		} else {
+			title.setSpan(new ForegroundColorSpan(Color.GRAY), 0, title.length(), 0);
+			menuItem.setEnabled(false);
+		}
+		menuItem.setTitle(title);
 	}
 
 	@Override
@@ -442,6 +469,9 @@ public class ScriptFragment extends ListFragment implements
 		switch (item.getItemId()) {
 			case R.id.menu_undo:
 				loadProjectAfterUndoOption();
+				break;
+			case R.id.resume:
+				prepareActionMode(RESUME);
 				break;
 			case R.id.backpack:
 				prepareActionMode(BACKPACK);

@@ -785,7 +785,7 @@ public class ActionFactory extends Actions {
 		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
 		action.setSpeechSynthesizer(new SpeechSynthesizer(scope, text));
 		action.setMobileServiceAvailability(get(MobileServiceAvailability.class));
-		action.setContext(StageActivity.activeStageActivity.get());
+		action.setContext(StageActivity.activeStageActivity);
 
 		return action;
 	}
@@ -795,7 +795,7 @@ public class ActionFactory extends Actions {
 		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
 		action.setSpeechSynthesizer(new SpeechSynthesizer(scope, text));
 		action.setMobileServiceAvailability(get(MobileServiceAvailability.class));
-		action.setContext(StageActivity.activeStageActivity.get());
+		action.setContext(StageActivity.activeStageActivity);
 		return action;
 	}
 

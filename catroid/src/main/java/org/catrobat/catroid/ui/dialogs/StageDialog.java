@@ -139,6 +139,7 @@ public class StageDialog extends Dialog implements View.OnClickListener {
 		clearBroadcastMaps();
 		resetEmbroideryThreadColor();
 		dismiss();
+		// stageActivity.setVisible(false);  // TODO: Move to navigating back to project list
 		stageActivity.exit();
 		new FinishThreadAndDisposeTexturesTask().execute(null, null, null);
 	}

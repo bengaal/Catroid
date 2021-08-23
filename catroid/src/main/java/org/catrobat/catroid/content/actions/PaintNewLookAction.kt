@@ -53,14 +53,14 @@ class PaintNewLookAction : PocketPaintAction() {
     }
 
     override fun getTargetIntent(): Intent? {
-        return StageActivity.activeStageActivity.get()?.let { stageActivity ->
+        return StageActivity.activeStageActivity?.let { stageActivity ->
             val intent = Intent("android.intent.action.MAIN").setComponent(ComponentName(
                 stageActivity, Constants.POCKET_PAINT_INTENT_ACTIVITY_NAME))
             val bundle = Bundle()
             bundle.putString(Constants.EXTRA_PICTURE_PATH_POCKET_PAINT, createEmptyImageFile().absolutePath)
             intent.putExtras(bundle)
             intent.addCategory("android.intent.category.LAUNCHER")
-            StageActivity.activeStageActivity.get()?.onPause()
+            StageActivity.activeStageActivity?.onPause()
             intent
         }
     }
@@ -90,7 +90,7 @@ class PaintNewLookAction : PocketPaintAction() {
         } else {
             LookRequester.anyAsked = false
         }
-        StageActivity.activeStageActivity.get()?.onResume()
+        StageActivity.activeStageActivity?.onResume()
         responseReceived = true
     }
 

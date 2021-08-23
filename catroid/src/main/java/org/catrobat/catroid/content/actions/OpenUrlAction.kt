@@ -32,7 +32,7 @@ class OpenUrlAction : WebAction() {
 
     private fun openUrl() {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        StageActivity.activeStageActivity.get()?.startActivity(browserIntent)
+        StageActivity.activeStageActivity?.startActivity(browserIntent)
     }
 
     override fun handleResponse() {
