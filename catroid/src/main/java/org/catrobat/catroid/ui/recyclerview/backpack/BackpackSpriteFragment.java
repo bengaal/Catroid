@@ -39,8 +39,10 @@ import java.io.IOException;
 import java.util.List;
 
 import androidx.annotation.PluralsRes;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.common.SharedPreferenceKeys.SHOW_DETAILS_SPRITES_PREFERENCE_KEY;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class BackpackSpriteFragment extends BackpackRecyclerViewFragment<Sprite> {
 
@@ -60,8 +62,9 @@ public class BackpackSpriteFragment extends BackpackRecyclerViewFragment<Sprite>
 	@Override
 	protected void unpackItems(List<Sprite> selectedItems) {
 		setShowProgressBar(true);
-		Project dstProject = ProjectManager.getInstance().getCurrentProject();
-		Scene dstScene = ProjectManager.getInstance().getCurrentlyEditedScene();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		Project dstProject = projectManager.getValue().getCurrentProject();
+		Scene dstScene = projectManager.getValue().getCurrentlyEditedScene();
 		int unpackedItemCnt = 0;
 
 		for (Sprite item : selectedItems) {

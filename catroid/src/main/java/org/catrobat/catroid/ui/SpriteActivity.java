@@ -82,6 +82,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.common.Constants.DEFAULT_IMAGE_EXTENSION;
 import static org.catrobat.catroid.common.Constants.DEFAULT_SOUND_EXTENSION;
@@ -105,6 +106,7 @@ import static org.catrobat.catroid.ui.WebViewActivity.MEDIA_FILE_PATH;
 import static org.catrobat.catroid.visualplacement.VisualPlacementActivity.CHANGED_COORDINATES;
 import static org.catrobat.catroid.visualplacement.VisualPlacementActivity.X_COORDINATE_BUNDLE_ARGUMENT;
 import static org.catrobat.catroid.visualplacement.VisualPlacementActivity.Y_COORDINATE_BUNDLE_ARGUMENT;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class SpriteActivity extends BaseActivity {
 
@@ -150,7 +152,7 @@ public class SpriteActivity extends BaseActivity {
 	private NewItemInterface<LookData> onNewLookListener;
 	private NewItemInterface<SoundInfo> onNewSoundListener;
 
-	private ProjectManager projectManager;
+	private final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 	private Project currentProject;
 	private Sprite currentSprite;
 	private Scene currentScene;
@@ -168,10 +170,10 @@ public class SpriteActivity extends BaseActivity {
 			return;
 		}
 
-		projectManager = ProjectManager.getInstance();
-		currentProject = projectManager.getCurrentProject();
-		currentSprite = projectManager.getCurrentSprite();
-		currentScene = projectManager.getCurrentlyEditedScene();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		currentProject = projectManager.getValue().getCurrentProject();
+		currentSprite = projectManager.getValue().getCurrentSprite();
+		currentScene = projectManager.getValue().getCurrentlyEditedScene();
 
 		setContentView(R.layout.activity_sprite);
 		setSupportActionBar(findViewById(R.id.toolbar));
@@ -215,7 +217,7 @@ public class SpriteActivity extends BaseActivity {
 		if (currentMenu != null) {
 			currentMenu.findItem(R.id.menu_undo).setVisible(visible);
 			if (visible) {
-				ProjectManager.getInstance().changedProject(currentProject.getName());
+				projectManager.getValue().changedProject(currentProject.getName());
 			}
 		}
 	}
@@ -223,9 +225,9 @@ public class SpriteActivity extends BaseActivity {
 	public void checkForChange() {
 		if (currentMenu != null) {
 			if (currentMenu.findItem(R.id.menu_undo).isVisible()) {
-				ProjectManager.getInstance().changedProject(currentProject.getName());
+				projectManager.getValue().changedProject(currentProject.getName());
 			} else {
-				ProjectManager.getInstance().resetChangedFlag(currentProject);
+				projectManager.getValue().resetChangedFlag(currentProject);
 			}
 		}
 	}
@@ -307,7 +309,7 @@ public class SpriteActivity extends BaseActivity {
 	}
 
 	private void saveProject() {
-		currentProject = ProjectManager.getInstance().getCurrentProject();
+		currentProject = projectManager.getValue().getCurrentProject();
 		new ProjectSaver(currentProject, getApplicationContext()).saveProjectAsync();
 	}
 
@@ -321,13 +323,13 @@ public class SpriteActivity extends BaseActivity {
 			ToastUtil.showError(this, message);
 			ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 			ClipData testResult = ClipData.newPlainText("TestResult",
-					ProjectManager.getInstance().getCurrentProject().getName() + "\n" + message);
+					projectManager.getValue().getCurrentProject().getName() + "\n" + message);
 			clipboard.setPrimaryClip(testResult);
 		}
 
 		if (resultCode != RESULT_OK) {
 			if (SettingsFragment.isCastSharedPreferenceEnabled(this)
-					&& projectManager.getCurrentProject().isCastProject()
+					&& projectManager.getValue().getCurrentProject().isCastProject()
 					&& !CastManager.getInstance().isConnected()) {
 
 				CastManager.getInstance().openDeviceSelectorOrDisconnectDialog(this);
@@ -682,7 +684,7 @@ public class SpriteActivity extends BaseActivity {
 
 		String mediaLibraryUrl;
 
-		if (projectManager.isCurrentProjectLandscapeMode()) {
+		if (projectManager.getValue().isCurrentProjectLandscapeMode()) {
 			mediaLibraryUrl = LIBRARY_BACKGROUNDS_URL_LANDSCAPE;
 		} else {
 			mediaLibraryUrl = LIBRARY_BACKGROUNDS_URL_PORTRAIT;
@@ -723,7 +725,7 @@ public class SpriteActivity extends BaseActivity {
 		String mediaLibraryUrl;
 
 		if (currentSprite.equals(currentScene.getBackgroundSprite())) {
-			if (projectManager.isCurrentProjectLandscapeMode()) {
+			if (projectManager.getValue().isCurrentProjectLandscapeMode()) {
 				mediaLibraryUrl = LIBRARY_BACKGROUNDS_URL_LANDSCAPE;
 			} else {
 				mediaLibraryUrl = LIBRARY_BACKGROUNDS_URL_PORTRAIT;
@@ -808,9 +810,8 @@ public class SpriteActivity extends BaseActivity {
 
 		List<UserData> variables = new ArrayList<>();
 
-		ProjectManager projectManager = ProjectManager.getInstance();
-		currentSprite = projectManager.getCurrentSprite();
-		currentProject = projectManager.getCurrentProject();
+		currentSprite = projectManager.getValue().getCurrentSprite();
+		currentProject = projectManager.getValue().getCurrentProject();
 
 		variables.addAll(currentProject.getUserVariables());
 		variables.addAll(currentProject.getMultiplayerVariables());
@@ -939,7 +940,7 @@ public class SpriteActivity extends BaseActivity {
 		while (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 			getSupportFragmentManager().popBackStack();
 		}
-		StageActivity.handlePlayButton(projectManager, this);
+		StageActivity.handlePlayButton(projectManager.getValue(), this);
 	}
 
 	@Nullable

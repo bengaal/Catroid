@@ -43,12 +43,17 @@ import java.util.List;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public abstract class UserVariableBrickWithFormula extends FormulaBrick implements UserVariableBrickInterface {
 
 	protected UserVariable userVariable;
 
 	private transient BrickSpinner<UserVariable> spinner;
+
+	private	final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 
 	@Override
 	public UserVariable getUserVariable() {
@@ -74,13 +79,13 @@ public abstract class UserVariableBrickWithFormula extends FormulaBrick implemen
 	public View getView(Context context) {
 		super.getView(context);
 
-		Sprite sprite = ProjectManager.getInstance().getCurrentSprite();
+		Sprite sprite = projectManager.getValue().getCurrentSprite();
 
 		List<Nameable> items = new ArrayList<>();
 		items.add(new NewOption(context.getString(R.string.new_option)));
 		items.addAll(sprite.getUserVariables());
-		items.addAll(ProjectManager.getInstance().getCurrentProject().getUserVariables());
-		items.addAll(ProjectManager.getInstance().getCurrentProject().getMultiplayerVariables());
+		items.addAll(projectManager.getValue().getCurrentProject().getUserVariables());
+		items.addAll(projectManager.getValue().getCurrentProject().getMultiplayerVariables());
 
 		spinner = new BrickSpinner<>(getSpinnerId(), view, items);
 		spinner.setOnItemSelectedListener(this);
@@ -95,8 +100,8 @@ public abstract class UserVariableBrickWithFormula extends FormulaBrick implemen
 			return;
 		}
 
-		final Project currentProject = ProjectManager.getInstance().getCurrentProject();
-		final Sprite currentSprite = ProjectManager.getInstance().getCurrentSprite();
+		final Project currentProject = projectManager.getValue().getCurrentProject();
+		final Sprite currentSprite = projectManager.getValue().getCurrentSprite();
 
 		UserVariableBrickTextInputDialogBuilder builder =
 				new UserVariableBrickTextInputDialogBuilder(currentProject, currentSprite, userVariable, activity, spinner);

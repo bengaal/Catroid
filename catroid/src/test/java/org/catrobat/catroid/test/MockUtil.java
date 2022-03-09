@@ -29,7 +29,10 @@ import android.content.pm.PackageManager;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.ScreenValues;
+import org.catrobat.catroid.koin.CatroidKoinHelperKt;
+import org.koin.core.module.Module;
 import org.mockito.Mockito;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -55,7 +58,27 @@ public final class MockUtil {
 		}
 		ScreenValues.setToDefaultScreenSize();
 
-		StaticSingletonInitializer.initializeStaticSingletonMethodsWith(contextMock);
+		StaticSingletonInitializer.initializeStaticSingletonMethods();
+
+		return contextMock;
+	}
+
+	public static Context mockContextForProject(List<Module> modules) throws RuntimeException {
+		Context contextMock = Mockito.mock(Context.class);
+		PackageManager packageManagerMock = Mockito.mock(PackageManager.class);
+		when(contextMock.getPackageManager()).thenReturn(packageManagerMock);
+		when(contextMock.getPackageName()).thenReturn("testStubPackage");
+		when(contextMock.getString(R.string.background)).thenReturn("Background");
+		PackageInfo packageInfoStub = new PackageInfo();
+		packageInfoStub.versionName = "testStub";
+		try {
+			when(packageManagerMock.getPackageInfo(any(String.class), anyInt())).thenReturn(packageInfoStub);
+		} catch (PackageManager.NameNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		ScreenValues.setToDefaultScreenSize();
+
+		CatroidKoinHelperKt.start(contextMock, modules);
 
 		return contextMock;
 	}

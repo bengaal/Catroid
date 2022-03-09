@@ -50,6 +50,7 @@ import java.util.Arrays;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.platform.app.InstrumentationRegistry;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.R.id.tab_layout;
 import static org.catrobat.catroid.common.Constants.SOUND_DIRECTORY_NAME;
@@ -62,6 +63,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.runners.Parameterized.Parameter;
 import static org.junit.runners.Parameterized.Parameters;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.espresso.Espresso.onIdle;
 import static androidx.test.espresso.Espresso.onView;
@@ -125,9 +127,10 @@ public class TabLayoutActionModeTest {
 		Sprite sprite = new Sprite("testSprite");
 
 		project.getDefaultScene().addSprite(sprite);
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
-		ProjectManager.getInstance().setCurrentlyEditedScene(project.getDefaultScene());
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentSprite(sprite);
+		projectManager.getValue().setCurrentlyEditedScene(project.getDefaultScene());
 		XstreamSerializer.getInstance().saveProject(project);
 
 		Script script = new StartScript();

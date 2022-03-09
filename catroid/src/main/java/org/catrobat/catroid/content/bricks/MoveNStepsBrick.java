@@ -36,6 +36,10 @@ import org.catrobat.catroid.formulaeditor.Formula;
 import org.catrobat.catroid.formulaeditor.InterpretationException;
 import org.catrobat.catroid.utils.Utils;
 
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
+
 public class MoveNStepsBrick extends FormulaBrick {
 
 	private static final long serialVersionUID = 1L;
@@ -65,9 +69,9 @@ public class MoveNStepsBrick extends FormulaBrick {
 		TextView label = view.findViewById(R.id.brick_move_n_steps_step_text_view);
 		if (getFormulaWithBrickField(BrickField.STEPS).isNumber()) {
 			try {
-				ProjectManager projectManager = ProjectManager.getInstance();
-				Scope scope = new Scope(projectManager.getCurrentProject(),
-						projectManager.getCurrentSprite(), null);
+				final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+				Scope scope = new Scope(projectManager.getValue().getCurrentProject(),
+						projectManager.getValue().getCurrentSprite(), null);
 				label.setText(view.getResources().getQuantityString(
 						R.plurals.brick_move_n_step_plural,
 						Utils.convertDoubleToPluralInteger(getFormulaWithBrickField(BrickField.STEPS).interpretDouble(

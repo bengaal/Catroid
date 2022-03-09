@@ -214,7 +214,7 @@ class MainMenuFragment : Fragment(),
             DEFAULT_ROOT_DIRECTORY,
             FileMetaDataExtractor.encodeSpecialCharsForFileSystem(currentProject)
         )
-        loadProject(projectDir, requireContext())
+        loadProject(projectDir)
         loadProjectImage()
     }
 

@@ -23,9 +23,6 @@
 
 package org.catrobat.catroid.test.formulaeditor;
 
-import android.content.Context;
-
-import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.content.Scope;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.formulaeditor.Formula;
@@ -68,9 +65,6 @@ public class FormulaTest {
 	@Before
 	public void setUp() {
 		internTokenList = new LinkedList<>();
-		if (ProjectManager.getInstance() == null) {
-			new ProjectManager(mock(Context.class));
-		}
 	}
 
 	@Test

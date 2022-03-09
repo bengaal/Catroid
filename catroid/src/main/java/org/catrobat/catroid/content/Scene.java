@@ -44,6 +44,9 @@ import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 @XStreamAlias("scene")
 @XStreamFieldKeyOrder({
@@ -217,12 +220,13 @@ public class Scene implements Nameable, Serializable {
 	}
 
 	public void updateUserDataReferences(String oldName, String newName, UserData<?> item) {
-		if (ProjectManager.getInstance().getCurrentProject().isGlobalVariable(item)) {
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		if (projectManager.getValue().getCurrentProject().isGlobalVariable(item)) {
 			for (Sprite sprite : spriteList) {
 				sprite.updateUserDataReferences(oldName, newName, item);
 			}
 		} else {
-			ProjectManager.getInstance().getCurrentSprite().updateUserDataReferences(oldName, newName, item);
+			projectManager.getValue().getCurrentSprite().updateUserDataReferences(oldName, newName, item);
 		}
 	}
 

@@ -50,6 +50,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import static org.koin.java.KoinJavaComponent.inject;
+
 @RunWith(AndroidJUnit4.class)
 public class StopAllSoundsActionTest {
 	private final SoundManager soundManager = SoundManager.getInstance();
@@ -124,7 +126,8 @@ public class StopAllSoundsActionTest {
 
 		project = new Project(ApplicationProvider.getApplicationContext(), projectName);
 		XstreamSerializer.getInstance().saveProject(project);
-		ProjectManager.getInstance().setCurrentProject(project);
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		projectManager.setCurrentProject(project);
 
 		soundFile = TestUtils.createSoundFile(project, R.raw.testsound, "soundTest.mp3");
 	}

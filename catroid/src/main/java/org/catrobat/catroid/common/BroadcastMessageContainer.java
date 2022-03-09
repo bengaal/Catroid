@@ -29,6 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
+
 public class BroadcastMessageContainer {
 
 	private final List<String> broadcastMessages;
@@ -38,7 +42,8 @@ public class BroadcastMessageContainer {
 	}
 
 	public void update() {
-		Set<String> usedMessages = ProjectManager.getInstance().getCurrentlyEditedScene().getBroadcastMessagesInUse();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		Set<String> usedMessages = projectManager.getValue().getCurrentlyEditedScene().getBroadcastMessagesInUse();
 		broadcastMessages.clear();
 		broadcastMessages.addAll(usedMessages);
 	}

@@ -31,6 +31,7 @@ import org.catrobat.catroid.formulaeditor.Formula;
 import org.catrobat.catroid.formulaeditor.UserVariable;
 
 import static org.catrobat.catroid.uiespresso.util.UserVariableAssertions.assertUserVariableEqualsWithTimeout;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public final class ScriptEvaluationGateBrick {
 	private static int gateCounter;
@@ -38,7 +39,8 @@ public final class ScriptEvaluationGateBrick {
 	private static final double DONEVALUE = 42.0;
 
 	private ScriptEvaluationGateBrick(Script script) {
-		Project project = ProjectManager.getInstance().getCurrentProject();
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		Project project = projectManager.getCurrentProject();
 		userVariableGate = new UserVariable("userVariableGate" + gateCounter);
 		project.addUserVariable(userVariableGate);
 		gateCounter++;

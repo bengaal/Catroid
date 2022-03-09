@@ -45,16 +45,19 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static junit.framework.Assert.assertEquals;
 
+import static org.koin.java.KoinJavaComponent.inject;
+
 @RunWith(AndroidJUnit4.class)
 public class DefaultChromeCastProgramLoadingTest {
 
 	private String projectName;
 	private Project currentProjectBuffer;
 	private Project project;
+	private final ProjectManager projectManager = inject(ProjectManager.class).getValue();
 
 	@Before
 	public void setUp() throws Exception {
-		currentProjectBuffer = ProjectManager.getInstance().getCurrentProject();
+		currentProjectBuffer = projectManager.getCurrentProject();
 		projectName = ApplicationProvider.getApplicationContext().getString(R.string.default_cast_project_name);
 		project = new ChromeCastProjectCreator()
 				.createDefaultProject(projectName, ApplicationProvider.getApplicationContext(), true);
@@ -62,7 +65,7 @@ public class DefaultChromeCastProgramLoadingTest {
 
 	@After
 	public void tearDown() throws Exception {
-		ProjectManager.getInstance().setCurrentProject(currentProjectBuffer);
+		projectManager.setCurrentProject(currentProjectBuffer);
 		TestUtils.deleteProjects(projectName);
 	}
 

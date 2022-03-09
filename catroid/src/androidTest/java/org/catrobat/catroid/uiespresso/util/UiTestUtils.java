@@ -43,6 +43,7 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 
 import static org.catrobat.catroid.uiespresso.util.matchers.SuperToastMatchers.isToast;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -91,8 +92,9 @@ public final class UiTestUtils {
 		Script script = new StartScript();
 		sprite.addScript(script);
 		project.getDefaultScene().addSprite(sprite);
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		projectManager.setCurrentProject(project);
+		projectManager.setCurrentSprite(sprite);
 		return project;
 	}
 

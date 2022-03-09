@@ -452,7 +452,7 @@ open class ProjectUploadActivity : BaseActivity(),
                     Log.e(TAG, "Creating renamed directory failed!")
                     return name
                 }
-                loadProject(renamedDirectory, applicationContext)
+                loadProject(renamedDirectory)
                 project = projectManager.currentProject
             }
             return name

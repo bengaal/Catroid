@@ -46,6 +46,9 @@ import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class DataListAdapter extends RecyclerView.Adapter<CheckableViewHolder> implements RVAdapter.SelectionListener {
 
@@ -353,17 +356,18 @@ public class DataListAdapter extends RecyclerView.Adapter<CheckableViewHolder> i
 	}
 
 	public void remove(UserData item) {
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 		if (item instanceof UserVariable) {
 			if (!globalVarAdapter.remove((UserVariable) item) && !localVarAdapter.remove((UserVariable) item)) {
 				multiplayerVarAdapter.remove((UserVariable) item);
 			}
-			File projectDir = ProjectManager.getInstance().getCurrentProject().getDirectory();
+			File projectDir = projectManager.getValue().getCurrentProject().getDirectory();
 			new DeviceVariableAccessor(projectDir).removeDeviceValue(item);
 		} else {
 			if (!globalListAdapter.remove((UserList) item)) {
 				localListAdapter.remove((UserList) item);
 			}
-			File projectDir = ProjectManager.getInstance().getCurrentProject().getDirectory();
+			File projectDir = projectManager.getValue().getCurrentProject().getDirectory();
 			new DeviceListAccessor(projectDir).removeDeviceValue(item);
 		}
 		notifyDataSetChanged();

@@ -44,8 +44,10 @@ import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.common.FlavoredConstants.DEFAULT_ROOT_DIRECTORY;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class ReplaceExistingProjectDialogFragment extends DialogFragment {
 
@@ -103,8 +105,8 @@ public class ReplaceExistingProjectDialogFragment extends DialogFragment {
 							downloader.downloadOverwriteExistingProject(context, textInput);
 							break;
 						case R.id.replace:
-
-							ProjectManager.getInstance().setCurrentProject(null);
+							final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+							projectManager.getValue().setCurrentProject(null);
 							downloader.downloadOverwriteExistingProject(context, textInput);
 							break;
 						default:

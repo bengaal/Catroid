@@ -42,14 +42,19 @@ import org.catrobat.catroid.content.PenConfiguration;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.XmlHeader;
 
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
+
 public class PenActor extends Actor {
 	private FrameBuffer buffer;
 	private Batch bufferBatch;
 	private OrthographicCamera camera;
 	private Float screenRatio;
+	private final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 
 	public PenActor() {
-		XmlHeader header = ProjectManager.getInstance().getCurrentProject().getXmlHeader();
+		XmlHeader header = projectManager.getValue().getCurrentProject().getXmlHeader();
 		buffer = new FrameBuffer(Pixmap.Format.RGBA8888, header.virtualScreenWidth, header.virtualScreenHeight, false);
 		bufferBatch = new SpriteBatch();
 		camera = new OrthographicCamera(header.virtualScreenWidth, header.virtualScreenHeight);
@@ -111,7 +116,7 @@ public class PenActor extends Actor {
 		DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
 		float deviceDiagonalPixel = (float) Math.sqrt(Math.pow(metrics.widthPixels, 2) + Math.pow(metrics.heightPixels, 2));
 
-		XmlHeader header = ProjectManager.getInstance().getCurrentProject().getXmlHeader();
+		XmlHeader header = projectManager.getValue().getCurrentProject().getXmlHeader();
 		float creatorDiagonalPixel = (float) Math.sqrt(Math.pow(header.getVirtualScreenWidth(), 2)
 				+ Math.pow(header.getVirtualScreenHeight(), 2));
 		return creatorDiagonalPixel / deviceDiagonalPixel;

@@ -55,11 +55,13 @@ import java.io.IOException;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import kotlin.Lazy;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 import static org.catrobat.catroid.common.Constants.SOUND_DIRECTORY_NAME;
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(AndroidJUnit4.class)
 public class SceneTransitionWithSoundBrickStageTest {
@@ -70,18 +72,13 @@ public class SceneTransitionWithSoundBrickStageTest {
 	private String firstSceneName;
 	private Script secondScript;
 
-	private static ProjectManager projectManager;
+	private final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 	private File soundFile;
 
 	@Rule
 	public BaseActivityTestRule<StageActivity> baseActivityTestRule = new
 			BaseActivityTestRule<>(StageActivity.class, false,
 			false);
-
-	@BeforeClass
-	public static void setUpProjectManager() {
-		projectManager = ProjectManager.getInstance();
-	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -138,8 +135,8 @@ public class SceneTransitionWithSoundBrickStageTest {
 
 		sprite.addScript(script);
 		project.getDefaultScene().addSprite(sprite);
-		projectManager.setCurrentProject(project);
-		projectManager.setCurrentSprite(sprite);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentSprite(sprite);
 		project.addScene(secondScene);
 		PlaySoundBrick soundBrick = new PlaySoundBrick();
 		soundFile = ResourceImporter.createSoundFileFromResourcesInDirectory(
@@ -154,7 +151,7 @@ public class SceneTransitionWithSoundBrickStageTest {
 		script.addBrick(soundBrick);
 		script.addBrick(new WaitBrick(500));
 		script.addBrick(new SceneTransitionBrick(secondScene.getName()));
-		projectManager.getCurrentSprite().getSoundList().add(soundInfo);
+		projectManager.getValue().getCurrentSprite().getSoundList().add(soundInfo);
 
 		secondScript = new StartScript();
 		Sprite secondSprite = new Sprite("Sprite2");

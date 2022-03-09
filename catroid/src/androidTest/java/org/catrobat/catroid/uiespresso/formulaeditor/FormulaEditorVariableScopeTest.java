@@ -55,6 +55,7 @@ import androidx.test.core.app.ApplicationProvider;
 import static org.catrobat.catroid.uiespresso.formulaeditor.utils.FormulaEditorDataListWrapper.onDataList;
 import static org.catrobat.catroid.uiespresso.formulaeditor.utils.FormulaEditorWrapper.onFormulaEditor;
 import static org.catrobat.catroid.uiespresso.ui.fragment.rvutils.RecyclerViewInteractionWrapper.onRecyclerView;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static java.util.Arrays.asList;
 
@@ -162,7 +163,7 @@ public class FormulaEditorVariableScopeTest {
 
 	private void createProject(String projectName) {
 		Project project = new Project(ApplicationProvider.getApplicationContext(), projectName);
-		ProjectManager projectManager = ProjectManager.getInstance();
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
 
 		Sprite sprite = new Sprite("Sprite1");
 		UserDefinedBrick userDefinedBrick = new UserDefinedBrick(asList(input, label, secondInput));

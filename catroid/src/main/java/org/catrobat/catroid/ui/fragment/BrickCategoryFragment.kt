@@ -48,7 +48,7 @@ import org.catrobat.catroid.ui.settingsfragments.AccessibilityProfile
 import org.catrobat.catroid.ui.settingsfragments.RaspberryPiSettingsFragment
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import org.catrobat.catroid.utils.SnackbarUtil
-import java.util.ArrayList
+import org.koin.java.KoinJavaComponent
 import java.util.concurrent.locks.Lock
 
 class BrickCategoryFragment : ListFragment() {
@@ -143,6 +143,7 @@ class BrickCategoryFragment : ListFragment() {
     private fun setupBrickCategories() {
         val inflater = requireActivity().layoutInflater
         val categories: MutableList<View> = ArrayList()
+        val projectManager: ProjectManager by KoinJavaComponent.inject(ProjectManager::class.java)
 
         categories.add(inflater.inflate(R.layout.brick_category_recently_used, null))
 
@@ -170,7 +171,7 @@ class BrickCategoryFragment : ListFragment() {
         if (SettingsFragment.isPhiroSharedPreferenceEnabled(activity)) {
             categories.add(inflater.inflate(R.layout.brick_category_phiro, null))
         }
-        if (ProjectManager.getInstance().currentProject.isCastProject) {
+        if (projectManager.currentProject.isCastProject) {
             categories.add(inflater.inflate(R.layout.brick_category_chromecast, null))
         }
 

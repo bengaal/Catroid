@@ -22,6 +22,8 @@
  */
 package org.catrobat.catroid.uiespresso.formulaeditor;
 
+import android.content.Context;
+
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.content.Project;
@@ -30,6 +32,7 @@ import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.StartScript;
 import org.catrobat.catroid.content.bricks.SetVariableBrick;
 import org.catrobat.catroid.formulaeditor.UserVariable;
+import org.catrobat.catroid.koin.CatroidKoinHelperKt;
 import org.catrobat.catroid.testsuites.annotations.Cat;
 import org.catrobat.catroid.testsuites.annotations.Level;
 import org.catrobat.catroid.ui.SpriteActivity;
@@ -40,11 +43,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.koin.core.module.Module;
+
+import java.util.Collections;
+import java.util.List;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.uiespresso.formulaeditor.utils.FormulaEditorWrapper.onFormulaEditor;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
@@ -71,17 +80,19 @@ public class FormulaEditorTest {
 				.perform(click());
 
 		//typeText not working for formula editor, so use CustomActions.typeInValue
-		onFormulaEditor()
-				.performEnterNumber(12345.678);
+		onFormulaEditor().performEnterNumber(12345.678);
 		pressBack();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		//CatroidKoinHelperKt.stop(dependencyModules);
 	}
 
-	public static Project createProject(String projectName) {
-		Project project = new Project(ApplicationProvider.getApplicationContext(), projectName);
+	public Project createProject(String projectName) {
+		Context context = ApplicationProvider.getApplicationContext();
+		//CatroidKoinHelperKt.start(context, dependencyModules);
+		Project project = new Project(context, projectName);
 		Sprite sprite = new Sprite("testSprite");
 		Script script = new StartScript();
 
@@ -94,8 +105,9 @@ public class FormulaEditorTest {
 		sprite.addScript(script);
 		project.getDefaultScene().addSprite(sprite);
 
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentSprite(sprite);
 
 		return project;
 	}

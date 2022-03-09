@@ -47,6 +47,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.PluralsRes;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class NfcTagListFragment extends RecyclerViewFragment<NfcTagData> {
 
@@ -88,7 +91,8 @@ public class NfcTagListFragment extends RecyclerViewFragment<NfcTagData> {
 
 	@Override
 	protected void initializeAdapter() {
-		List<NfcTagData> items = ProjectManager.getInstance().getCurrentSprite().getNfcTagList();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		List<NfcTagData> items = projectManager.getValue().getCurrentSprite().getNfcTagList();
 		sharedPreferenceDetailsKey = "showDetailsNfcTags";
 		adapter = new NfcTagAdapter(items);
 		emptyView.setText(R.string.fragment_nfctag_text_description);

@@ -37,6 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class CloneBrick extends BrickBaseType implements BrickSpinner.OnItemSelectedListener<Sprite> {
 
@@ -59,9 +62,10 @@ public class CloneBrick extends BrickBaseType implements BrickSpinner.OnItemSele
 
 		List<Nameable> items = new ArrayList<>();
 		items.add(new StringOption(context.getString(R.string.brick_clone_this)));
-		items.addAll(ProjectManager.getInstance().getCurrentlyEditedScene().getSpriteList());
-		items.remove(ProjectManager.getInstance().getCurrentlyEditedScene().getBackgroundSprite());
-		items.remove(ProjectManager.getInstance().getCurrentSprite());
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		items.addAll(projectManager.getValue().getCurrentlyEditedScene().getSpriteList());
+		items.remove(projectManager.getValue().getCurrentlyEditedScene().getBackgroundSprite());
+		items.remove(projectManager.getValue().getCurrentSprite());
 
 		spinner = new BrickSpinner<>(R.id.brick_clone_spinner, view, items);
 		spinner.setOnItemSelectedListener(this);

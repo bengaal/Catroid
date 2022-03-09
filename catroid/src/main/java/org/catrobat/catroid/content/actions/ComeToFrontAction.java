@@ -30,6 +30,10 @@ import org.catrobat.catroid.content.Sprite;
 
 import java.util.List;
 
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
+
 public class ComeToFrontAction extends TemporalAction {
 
 	private Sprite sprite;
@@ -37,7 +41,8 @@ public class ComeToFrontAction extends TemporalAction {
 	@Override
 	protected void update(float delta) {
 
-		List<Sprite> spriteList = ProjectManager.getInstance().getCurrentProject().getSpriteListWithClones();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		List<Sprite> spriteList = projectManager.getValue().getCurrentProject().getSpriteListWithClones();
 		sprite.look.setZIndex(spriteList.size() + Constants.Z_INDEX_NUMBER_VIRTUAL_LAYERS - 1);
 	}
 

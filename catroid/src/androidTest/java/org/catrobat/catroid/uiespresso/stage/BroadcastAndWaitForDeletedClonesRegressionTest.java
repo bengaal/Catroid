@@ -46,6 +46,9 @@ import org.junit.runner.RunWith;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(AndroidJUnit4.class)
 public class BroadcastAndWaitForDeletedClonesRegressionTest {
@@ -71,7 +74,8 @@ public class BroadcastAndWaitForDeletedClonesRegressionTest {
 
 	private void createProject() {
 		Project project = new Project(ApplicationProvider.getApplicationContext(), "BroadcastForDeletedClonesRegressionTest");
-		ProjectManager.getInstance().setCurrentProject(project);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
 
 		Sprite sprite = new Sprite("testSprite");
 
@@ -88,7 +92,7 @@ public class BroadcastAndWaitForDeletedClonesRegressionTest {
 		sprite.addScript(broadcastReceiveScript);
 		broadCastReceived = ScriptEvaluationGateBrick.appendToScript(broadcastReceiveScript);
 
-		ProjectManager.getInstance().getCurrentlyEditedScene().addSprite(sprite);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
+		projectManager.getValue().getCurrentlyEditedScene().addSprite(sprite);
+		projectManager.getValue().setCurrentSprite(sprite);
 	}
 }

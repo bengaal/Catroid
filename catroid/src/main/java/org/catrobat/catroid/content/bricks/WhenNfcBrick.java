@@ -44,6 +44,9 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class WhenNfcBrick extends ScriptBrickBaseType implements BrickSpinner.OnItemSelectedListener<NfcTagData> {
 
@@ -82,7 +85,8 @@ public class WhenNfcBrick extends ScriptBrickBaseType implements BrickSpinner.On
 	@Override
 	public View getView(Context context) {
 		super.getView(context);
-		Sprite currentSprite = ProjectManager.getInstance().getCurrentSprite();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		Sprite currentSprite = projectManager.getValue().getCurrentSprite();
 
 		List<Nameable> items = new ArrayList<>();
 		items.add(new NewOption(context.getString(R.string.brick_when_nfc_edit_list_of_nfc_tags)));

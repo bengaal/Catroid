@@ -44,6 +44,10 @@ import org.catrobat.catroid.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
+
 public class RepeatBrick extends FormulaBrick implements CompositeBrick {
 
 	private transient EndBrick endBrick = new EndBrick(this);
@@ -157,9 +161,9 @@ public class RepeatBrick extends FormulaBrick implements CompositeBrick {
 		TextView label = view.findViewById(R.id.brick_repeat_time_text_view);
 		if (getFormulaWithBrickField(BrickField.TIMES_TO_REPEAT).isNumber()) {
 			try {
-				ProjectManager projectManager = ProjectManager.getInstance();
-				Scope scope = new Scope(projectManager.getCurrentProject(),
-						projectManager.getCurrentSprite(), null);
+				final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+				Scope scope = new Scope(projectManager.getValue().getCurrentProject(),
+						projectManager.getValue().getCurrentSprite(), null);
 				label.setText(view.getResources().getQuantityString(
 						R.plurals.time_plural,
 						Utils.convertDoubleToPluralInteger(getFormulaWithBrickField(BrickField.TIMES_TO_REPEAT)

@@ -46,6 +46,8 @@ import org.catrobat.catroid.utils.ShowTextUtils.AndroidStringProvider;
 import java.util.List;
 import java.util.Locale;
 
+import kotlin.Lazy;
+
 import static org.catrobat.catroid.utils.ShowTextUtils.ALIGNMENT_STYLE_CENTERED;
 import static org.catrobat.catroid.utils.ShowTextUtils.DEFAULT_TEXT_SIZE;
 import static org.catrobat.catroid.utils.ShowTextUtils.DEFAULT_X_OFFSET;
@@ -55,6 +57,7 @@ import static org.catrobat.catroid.utils.ShowTextUtils.getStringAsInteger;
 import static org.catrobat.catroid.utils.ShowTextUtils.isNumberAndInteger;
 import static org.catrobat.catroid.utils.ShowTextUtils.isValidColorString;
 import static org.catrobat.catroid.utils.ShowTextUtils.sanitizeTextSize;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class ShowTextActor extends Actor {
 
@@ -97,8 +100,9 @@ public class ShowTextActor extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		drawVariables(ProjectManager.getInstance().getCurrentProject().getUserVariables(), batch);
-		drawVariables(ProjectManager.getInstance().getCurrentProject().getMultiplayerVariables(), batch);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		drawVariables(projectManager.getValue().getCurrentProject().getUserVariables(), batch);
+		drawVariables(projectManager.getValue().getCurrentProject().getMultiplayerVariables(), batch);
 		drawVariables(sprite.getUserVariables(), batch);
 	}
 

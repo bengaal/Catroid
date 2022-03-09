@@ -43,8 +43,11 @@ import org.junit.runner.RunWith;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static junit.framework.TestCase.assertEquals;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu;
@@ -131,14 +134,15 @@ public class CatblocksScriptFragmentTest {
 			}
 		}
 
-		ProjectManager.getInstance().getCurrentSprite().getScript(0).setPosX(50);
-		ProjectManager.getInstance().getCurrentSprite().getScript(0).setPosY(50);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().getCurrentSprite().getScript(0).setPosX(50);
+		projectManager.getValue().getCurrentSprite().getScript(0).setPosY(50);
 
 		openContextualActionModeOverflowMenu();
 		onView(withText(R.string.catblocks_reorder)).perform(click());
 
-		assertEquals(ProjectManager.getInstance().getCurrentSprite().getScript(0).getPosX(), 0.0f);
-		assertEquals(ProjectManager.getInstance().getCurrentSprite().getScript(0).getPosY(), 0.0f);
+		assertEquals(projectManager.getValue().getCurrentSprite().getScript(0).getPosX(), 0.0f);
+		assertEquals(projectManager.getValue().getCurrentSprite().getScript(0).getPosY(), 0.0f);
 	}
 
 	private void createProject() {
@@ -157,7 +161,8 @@ public class CatblocksScriptFragmentTest {
 
 		sprite.addScript(startScript);
 
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentSprite(sprite);
 	}
 }

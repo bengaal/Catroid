@@ -50,6 +50,9 @@ import java.util.Arrays;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.core.util.Pair;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class ShowBubbleActor extends Actor {
 	ArrayList<String> bubbleValue;
@@ -154,13 +157,15 @@ public class ShowBubbleActor extends Actor {
 	}
 
 	private boolean drawRight() {
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 		return imageRight.getX() + imageRight.getWidth()
-				< (ProjectManager.getInstance().getCurrentProject().getXmlHeader().virtualScreenWidth / 2);
+				< (projectManager.getValue().getCurrentProject().getXmlHeader().virtualScreenWidth / 2);
 	}
 
 	private boolean drawLeft() {
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 		return imageLeft.getX()
-				> -(ProjectManager.getInstance().getCurrentProject().getXmlHeader().virtualScreenWidth / 2);
+				> -(projectManager.getValue().getCurrentProject().getXmlHeader().virtualScreenWidth / 2);
 	}
 
 	private Pixmap drawBubbleOnCanvas(ArrayList<String> lines, boolean right) {

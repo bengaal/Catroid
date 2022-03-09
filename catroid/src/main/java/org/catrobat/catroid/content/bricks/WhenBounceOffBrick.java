@@ -39,6 +39,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class WhenBounceOffBrick extends ScriptBrickBaseType implements BrickSpinner.OnItemSelectedListener<Sprite> {
 
@@ -83,7 +86,8 @@ public class WhenBounceOffBrick extends ScriptBrickBaseType implements BrickSpin
 		items.add(new StringOption(ANYTHING_ESCAPE_CHAR + context.getString(R.string.collision_with_anything)
 				+ ANYTHING_ESCAPE_CHAR));
 
-		items.addAll(ProjectManager.getInstance().getCurrentlyEditedScene().getSpriteList());
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		items.addAll(projectManager.getValue().getCurrentlyEditedScene().getSpriteList());
 		spinner = new BrickSpinner<>(R.id.brick_when_bounce_off_spinner, view, items);
 		spinner.setOnItemSelectedListener(this);
 		spinner.setSelection(script.getSpriteToBounceOffName());

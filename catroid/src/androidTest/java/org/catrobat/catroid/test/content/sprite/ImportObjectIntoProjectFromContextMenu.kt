@@ -50,6 +50,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
@@ -107,8 +108,9 @@ class ImportObjectIntoProjectFromContextMenu {
         ZipArchiver().zip(projectZip, importedProject?.directory?.listFiles())
         uri = Uri.fromFile(projectZip)
 
-        ProjectManager.getInstance().currentProject = project
-        ProjectManager.getInstance().currentSprite = project!!.defaultScene.spriteList[1]
+        val projectManager: ProjectManager by inject(ProjectManager::class.java)
+        projectManager.currentProject = project
+        projectManager.currentSprite = project!!.defaultScene.spriteList[1]
         Intents.init()
         baseActivityTestRule.launchActivity()
     }

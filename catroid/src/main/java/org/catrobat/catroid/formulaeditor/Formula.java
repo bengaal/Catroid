@@ -33,7 +33,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
+import kotlin.Lazy;
+
 import static org.catrobat.catroid.utils.NumberFormats.trimTrailingCharacters;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class Formula implements Serializable {
 
@@ -102,7 +105,8 @@ public class Formula implements Serializable {
 
 	public void updateCollisionFormulasToVersion() {
 		internFormula.updateCollisionFormulaToVersion(CatroidApplication.getAppContext());
-		formulaTree.updateCollisionFormulaToVersion(ProjectManager.getInstance().getCurrentProject());
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		formulaTree.updateCollisionFormulaToVersion(projectManager.getValue().getCurrentProject());
 	}
 
 	public void updateDirectionPropertyToVersion() {

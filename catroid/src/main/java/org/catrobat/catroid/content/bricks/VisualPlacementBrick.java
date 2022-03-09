@@ -41,11 +41,13 @@ import org.catrobat.catroid.visualplacement.VisualPlacementActivity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.ui.SpriteActivity.EXTRA_BRICK_HASH;
 import static org.catrobat.catroid.ui.SpriteActivity.EXTRA_X_TRANSFORM;
 import static org.catrobat.catroid.ui.SpriteActivity.EXTRA_Y_TRANSFORM;
 import static org.catrobat.catroid.ui.SpriteActivity.REQUEST_CODE_VISUAL_PLACEMENT;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public abstract class VisualPlacementBrick extends FormulaBrick {
 
@@ -105,9 +107,9 @@ public abstract class VisualPlacementBrick extends FormulaBrick {
 		int xValue;
 		int yValue;
 		try {
-			ProjectManager projectManager = ProjectManager.getInstance();
-			Scope scope = new Scope(projectManager.getCurrentProject(),
-					projectManager.getCurrentSprite(), null);
+			final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+			Scope scope = new Scope(projectManager.getValue().getCurrentProject(),
+					projectManager.getValue().getCurrentSprite(), null);
 			xValue = formulax.interpretInteger(scope);
 			yValue = formulay.interpretInteger(scope);
 		} catch (InterpretationException interpretationException) {

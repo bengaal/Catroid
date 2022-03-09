@@ -35,8 +35,8 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressKey
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -65,10 +65,12 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.java.KoinJavaComponent.inject
 import java.io.IOException
 
 class BrickSearchTest {
     var projectName = "searchTestProject"
+    private val projectManager: ProjectManager by inject(ProjectManager::class.java)
 
     @Rule
     @JvmField
@@ -251,9 +253,9 @@ class BrickSearchTest {
         val sprite1 = Sprite("testSprite1")
         project.addScene(scene1)
         project.getSceneByName(sceneName1).addSprite(sprite1)
-        ProjectManager.getInstance().currentProject = project
-        ProjectManager.getInstance().setCurrentSceneAndSprite(sceneName1, sprite1.name)
-        ProjectManager.getInstance().currentlyEditedScene = scene1
+        projectManager.currentProject = project
+        projectManager.setCurrentSceneAndSprite(sceneName1, sprite1.name)
+        projectManager.currentlyEditedScene = scene1
     }
 
     @After

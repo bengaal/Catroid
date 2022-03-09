@@ -43,6 +43,8 @@ import org.catrobat.catroid.content.eventids.NfcEventId;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import static org.koin.java.KoinJavaComponent.inject;
+
 public final class NfcHandler {
 	private static final String TAG = NfcHandler.class.getSimpleName();
 	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
@@ -112,7 +114,8 @@ public final class NfcHandler {
 		EventId anyNfcEventId = new EventId(EventId.ANY_NFC);
 		EventWrapper anyNfcEvent = new EventWrapper(anyNfcEventId, false);
 
-		Project currentProject = ProjectManager.getInstance().getCurrentProject();
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		Project currentProject = projectManager.getCurrentProject();
 		currentProject.fireToAllSprites(nfcEvent);
 		currentProject.fireToAllSprites(anyNfcEvent);
 	}

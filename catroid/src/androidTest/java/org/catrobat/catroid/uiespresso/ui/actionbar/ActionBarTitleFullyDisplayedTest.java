@@ -40,12 +40,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import androidx.test.core.app.ApplicationProvider;
+import kotlin.Lazy;
 
 import static junit.framework.Assert.assertEquals;
 
 import static org.catrobat.catroid.io.asynctask.ProjectSaverKt.saveProjectSerial;
 import static org.catrobat.catroid.uiespresso.ui.actionbar.utils.ActionBarWrapper.onActionBar;
 import static org.catrobat.catroid.uiespresso.ui.actionbar.utils.ActionModeWrapper.onActionMode;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -59,6 +61,8 @@ public class ActionBarTitleFullyDisplayedTest {
 	public BaseActivityTestRule<ProjectActivity> baseActivityTestRule = new
 			BaseActivityTestRule<>(ProjectActivity.class, false, false);
 
+	private final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+
 	@Before
 	public void setUp() throws Exception {
 		createTestProject("ActionBarTitleFullyDisplayedTest");
@@ -68,7 +72,7 @@ public class ActionBarTitleFullyDisplayedTest {
 	@Category({Cat.AppUi.class, Level.Smoke.class})
 	@Test
 	public void actionBarTitleFullyDisplayedTest() {
-		String currentProjectName = ProjectManager.getInstance().getCurrentProject().getName();
+		String currentProjectName = projectManager.getValue().getCurrentProject().getName();
 
 		onActionBar()
 				.checkTitleMatches(currentProjectName);
@@ -99,7 +103,7 @@ public class ActionBarTitleFullyDisplayedTest {
 		project.addScene(sceneTwo);
 		project.addScene(sceneThree);
 
-		ProjectManager.getInstance().setCurrentProject(project);
+		projectManager.getValue().setCurrentProject(project);
 		saveProjectSerial(project, ApplicationProvider.getApplicationContext());
 	}
 

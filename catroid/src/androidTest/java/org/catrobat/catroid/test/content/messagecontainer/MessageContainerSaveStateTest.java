@@ -43,12 +43,14 @@ import java.util.List;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static junit.framework.Assert.assertEquals;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(AndroidJUnit4.class)
 public class MessageContainerSaveStateTest {
@@ -69,7 +71,8 @@ public class MessageContainerSaveStateTest {
 
 	@Test
 	public void testDoNotSaveUnusedMessages() {
-		List<String> broadcastMessages = ProjectManager.getInstance().getCurrentProject()
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		List<String> broadcastMessages = projectManager.getValue().getCurrentProject()
 				.getBroadcastMessageContainer().getBroadcastMessages();
 
 		assertThat(broadcastMessages, hasItem(broadcastMessage1));
@@ -94,11 +97,11 @@ public class MessageContainerSaveStateTest {
 		project1.getBroadcastMessageContainer().addBroadcastMessage(unusedMessage);
 
 		XstreamSerializer.getInstance().saveProject(project1);
+		
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().loadProject(project1.getDirectory());
 
-		ProjectManager.getInstance()
-				.loadProject(project1.getDirectory(), ApplicationProvider.getApplicationContext());
-
-		ProjectManager.getInstance()
-				.setCurrentlyEditedScene(ProjectManager.getInstance().getCurrentProject().getDefaultScene());
+		projectManager.getValue()
+				.setCurrentlyEditedScene(projectManager.getValue().getCurrentProject().getDefaultScene());
 	}
 }

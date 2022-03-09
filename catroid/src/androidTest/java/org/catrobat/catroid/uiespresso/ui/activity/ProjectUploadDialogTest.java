@@ -54,6 +54,7 @@ import static org.catrobat.catroid.common.Constants.UPLOAD_RESULT_RECEIVER_RESUL
 import static org.catrobat.catroid.io.asynctask.ProjectSaverKt.saveProjectSerial;
 import static org.catrobat.catroid.ui.ProjectUploadActivityKt.NUMBER_OF_UPLOADED_PROJECTS;
 import static org.catrobat.catroid.ui.ProjectUploadActivityKt.PROJECT_DIR;
+import static org.koin.java.KoinJavaComponent.inject;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -85,7 +86,8 @@ public class ProjectUploadDialogTest {
 		this.project = new Project(ApplicationProvider.getApplicationContext(),
 				PROJECT_NAME, false);
 		Scene firstScene = new Scene("scene", project);
-		ProjectManager.getInstance().setCurrentProject(project);
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		projectManager.setCurrentProject(project);
 		Sprite firstSprite = new Sprite("firstSprite");
 		Script firstScript = new StartScript();
 		firstSprite.addScript(firstScript);
@@ -103,7 +105,8 @@ public class ProjectUploadDialogTest {
 		sharedPreferences.edit()
 				.remove(NUMBER_OF_UPLOADED_PROJECTS)
 				.commit();
-		ProjectManager.getInstance().setCurrentProject(null);
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		projectManager.setCurrentProject(null);
 	}
 
 	@Test

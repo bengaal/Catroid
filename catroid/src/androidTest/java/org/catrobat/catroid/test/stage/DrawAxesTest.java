@@ -39,8 +39,11 @@ import java.util.Arrays;
 
 import androidx.annotation.IdRes;
 import androidx.test.core.app.ApplicationProvider;
+import kotlin.Lazy;
 
 import static junit.framework.Assert.assertEquals;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(Parameterized.class)
 public class DrawAxesTest {
@@ -82,7 +85,8 @@ public class DrawAxesTest {
 	@Before
 	public void setUp() throws Exception {
 		project = new Project(ApplicationProvider.getApplicationContext(), "Project");
-		ProjectManager.getInstance().setCurrentProject(project);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
 		project.getXmlHeader().setVirtualScreenHeight(projectLayoutHeight);
 		project.getXmlHeader().setVirtualScreenWidth(projectLayoutWidth);
 		project.getXmlHeader().setlandscapeMode(projectLandscapeMode);

@@ -55,6 +55,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.koin.java.KoinJavaComponent.inject
 
 @RunWith(Parameterized::class)
 class FormulaEditorComputeDialogUserDefinedBrickInputTest(
@@ -65,6 +66,7 @@ class FormulaEditorComputeDialogUserDefinedBrickInputTest(
     private lateinit var userDefinedBrick: UserDefinedBrick
     private val label = UserDefinedBrickLabel("Label")
     private var input = UserDefinedBrickInput("Input")
+    private val projectManager: ProjectManager by inject(ProjectManager::class.java)
 
     @Rule
     @JvmField
@@ -91,8 +93,8 @@ class FormulaEditorComputeDialogUserDefinedBrickInputTest(
         userDefinedScript.addBrick(
             ChangeSizeByNBrick(Formula(FormulaElement(USER_DEFINED_BRICK_INPUT, input.name, null)))
         )
-        ProjectManager.getInstance().currentSprite.addScript(userDefinedScript)
-        project = ProjectManager.getInstance().currentProject
+        projectManager.currentSprite.addScript(userDefinedScript)
+        project = projectManager.currentProject
         baseActivityTestRule.launchActivity()
     }
 

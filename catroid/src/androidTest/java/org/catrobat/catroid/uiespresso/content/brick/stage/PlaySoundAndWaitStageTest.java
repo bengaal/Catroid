@@ -55,23 +55,21 @@ import java.util.List;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static junit.framework.TestCase.assertEquals;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(AndroidJUnit4.class)
 public class PlaySoundAndWaitStageTest {
 
-	private static ProjectManager projectManager;
+	private	final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 	private SoundInfo soundInfo;
 	private ScriptEvaluationGateBrick scriptEvaluationGateBrick;
 	private Project project;
 	private UserVariable userVariable;
 	private RepeatBrick repeatBrick;
-
-	@BeforeClass
-	public static void setUpProjectManager() {
-		projectManager = ProjectManager.getInstance();
-	}
 
 	@Rule
 	public BaseActivityTestRule<StageActivity> baseActivityTestRule = new
@@ -99,7 +97,7 @@ public class PlaySoundAndWaitStageTest {
 		soundBrick.setSound(soundInfo);
 		script2.addBrick(soundBrick);
 		soundBrick.setParent(script2.getScriptBrick());
-		projectManager.getCurrentSprite().getSoundList().add(soundInfo);
+		projectManager.getValue().getCurrentSprite().getSoundList().add(soundInfo);
 		project.getDefaultScene().getBackgroundSprite().addScript(script2);
 		ScriptEvaluationGateBrick.appendToScript(script2).waitUntilEvaluated(5000);
 		assertEquals(1.0, userVariable.getValue());
@@ -110,8 +108,8 @@ public class PlaySoundAndWaitStageTest {
 		Sprite sprite = project.getDefaultScene().getBackgroundSprite();
 		XstreamSerializer.getInstance().saveProject(project);
 		project.getDefaultScene().addSprite(sprite);
-		projectManager.setCurrentProject(project);
-		projectManager.setCurrentSprite(sprite);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentSprite(sprite);
 		Script script = new StartScript();
 		PlaySoundAndWaitBrick soundBrick = new PlaySoundAndWaitBrick();
 		File soundFile = TestUtils.createSoundFile(project, org.catrobat.catroid.test.R.raw.testsound2,
@@ -129,7 +127,7 @@ public class PlaySoundAndWaitStageTest {
 		script.addBrick(new WaitBrick(100));
 		script.addBrick(setVariableBrick);
 		project.getDefaultScene().getBackgroundSprite().addScript(script);
-		projectManager.getCurrentSprite().getSoundList().add(soundInfo);
+		projectManager.getValue().getCurrentSprite().getSoundList().add(soundInfo);
 		scriptEvaluationGateBrick = ScriptEvaluationGateBrick.appendToScript(script);
 	}
 }

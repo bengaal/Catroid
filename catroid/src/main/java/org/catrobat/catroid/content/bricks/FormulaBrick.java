@@ -52,6 +52,9 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public abstract class FormulaBrick extends BrickBaseType implements View.OnClickListener {
 
@@ -180,9 +183,9 @@ public abstract class FormulaBrick extends BrickBaseType implements View.OnClick
 
 		if (getFormulaWithBrickField(formulaField).isNumber()) {
 			try {
-				ProjectManager projectManager = ProjectManager.getInstance();
-				Scope scope = new Scope(projectManager.getCurrentProject(),
-						projectManager.getCurrentSprite(), null);
+				final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+				Scope scope = new Scope(projectManager.getValue().getCurrentProject(),
+						projectManager.getValue().getCurrentSprite(), null);
 				Double formulaValue = formulaMap.get(formulaField).interpretDouble(scope);
 				textView.setText(context.getResources().getQuantityString(R.plurals.second_plural,
 						Utils.convertDoubleToPluralInteger(formulaValue)));

@@ -59,6 +59,9 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public final class SensorHandler implements SensorEventListener, SensorCustomEventListener, LocationListener,
 		GpsStatus.Listener {
@@ -536,8 +539,9 @@ public final class SensorHandler implements SensorEventListener, SensorCustomEve
 	}
 
 	private static int rotateOrientation() {
-		if (ProjectManager.getInstance().isCurrentProjectLandscapeMode() ^ isDeviceDefaultRotationLandscape()) {
-			return ProjectManager.getInstance().isCurrentProjectLandscapeMode() ? 1 : -1;
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		if (projectManager.getValue().isCurrentProjectLandscapeMode() ^ isDeviceDefaultRotationLandscape()) {
+			return projectManager.getValue().isCurrentProjectLandscapeMode() ? 1 : -1;
 		}
 		return 0;
 	}

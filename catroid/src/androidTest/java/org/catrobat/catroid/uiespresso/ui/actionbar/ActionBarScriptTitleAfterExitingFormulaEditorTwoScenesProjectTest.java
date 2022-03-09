@@ -41,8 +41,10 @@ import org.junit.runner.RunWith;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.uiespresso.ui.actionbar.utils.ActionBarWrapper.onActionBar;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -75,15 +77,17 @@ public class ActionBarScriptTitleAfterExitingFormulaEditorTwoScenesProjectTest {
 
 		sprite.addScript(script);
 		project.getDefaultScene().addSprite(sprite);
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
-		ProjectManager.getInstance().setCurrentlyEditedScene(project.getDefaultScene());
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentSprite(sprite);
+		projectManager.getValue().setCurrentlyEditedScene(project.getDefaultScene());
 	}
 
 	@Test
 	public void actionBarScriptTitleTwoScenesProjectTest() {
-		String currentSceneName = ProjectManager.getInstance().getCurrentlyEditedScene().getName();
-		String currentSpriteName = ProjectManager.getInstance().getCurrentSprite().getName();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		String currentSceneName = projectManager.getValue().getCurrentlyEditedScene().getName();
+		String currentSpriteName = projectManager.getValue().getCurrentSprite().getName();
 		String scriptsTitle = currentSceneName + ": " + currentSpriteName;
 
 		onActionBar()

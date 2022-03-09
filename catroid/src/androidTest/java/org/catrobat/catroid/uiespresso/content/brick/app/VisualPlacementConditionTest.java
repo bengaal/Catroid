@@ -57,6 +57,7 @@ import androidx.test.core.app.ApplicationProvider;
 
 import static org.catrobat.catroid.uiespresso.content.brick.app.VisualPlacementBrickTest.isFormulaEditorShownImmediatelyWithTapOnEditText;
 import static org.catrobat.catroid.uiespresso.content.brick.utils.BrickDataInteractionWrapper.onBrickAtPosition;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -122,7 +123,7 @@ public class VisualPlacementConditionTest {
 		Project project = new Project(ApplicationProvider.getApplicationContext(), VisualPlacementBrickTest.class.getSimpleName());
 		Sprite sprite = new Sprite("testSprite");
 		Script script = new StartScript();
-		ProjectManager projectManager = ProjectManager.getInstance();
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
 
 		userVariable = new UserVariable("userVariable");
 		sprite.addScript(script);

@@ -53,6 +53,7 @@ import java.util.zip.ZipFile;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.GrantPermissionRule;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.common.Constants.CATROBAT_EXTENSION;
 import static org.catrobat.catroid.common.Constants.CODE_XML_FILE_NAME;
@@ -61,6 +62,7 @@ import static org.catrobat.catroid.common.Constants.UNDO_CODE_XML_FILE_NAME;
 import static org.catrobat.catroid.io.asynctask.ProjectSaverKt.saveProjectSerial;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
+import static org.koin.java.KoinJavaComponent.inject;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(AndroidJUnit4.class)
@@ -82,7 +84,8 @@ public class ProjectExportTaskTest {
 		project = new Project(ApplicationProvider.getApplicationContext(),
 				ProjectExportTaskTest.class.getSimpleName());
 
-		ProjectManager.getInstance().setCurrentProject(project);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
 		saveProjectSerial(project, ApplicationProvider.getApplicationContext());
 
 		NotificationManager notificationManagerMock = Mockito.mock(NotificationManager.class);

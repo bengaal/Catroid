@@ -107,6 +107,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.common.Constants.CODE_XML_FILE_NAME;
 import static org.catrobat.catroid.common.Constants.UNDO_CODE_XML_FILE_NAME;
@@ -114,6 +115,7 @@ import static org.catrobat.catroid.ui.SpriteActivity.FRAGMENT_SCRIPTS;
 import static org.catrobat.catroid.ui.SpriteActivityOnTabSelectedListenerKt.addTabLayout;
 import static org.catrobat.catroid.ui.SpriteActivityOnTabSelectedListenerKt.removeTabLayout;
 import static org.catrobat.catroid.utils.SnackbarUtil.wasHintAlreadyShown;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.fragment.app.DialogFragment.STYLE_NORMAL;
 
@@ -150,6 +152,8 @@ public class FormulaEditorFragment extends Fragment implements ViewTreeObserver.
 	private boolean hasFormulaBeenChanged = false;
 
 	private String actionBarTitleBuffer = "";
+	
+	private final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -412,7 +416,7 @@ public class FormulaEditorFragment extends Fragment implements ViewTreeObserver.
 		int currentColor = callback.getValue();
 		ColorPickerDialog dialog = ColorPickerDialog.Companion.newInstance(currentColor);
 		Bitmap projectBitmap = ProjectManagerExtensionsKt
-				.getProjectBitmap(ProjectManager.getInstance());
+				.getProjectBitmap(projectManager.getValue());
 		dialog.setBitmap(projectBitmap);
 		dialog.addOnColorPickedListener(callback::setValue);
 		dialog.setStyle(STYLE_NORMAL, R.style.AlertDialogWithTitle);
@@ -553,8 +557,8 @@ public class FormulaEditorFragment extends Fragment implements ViewTreeObserver.
 
 	public void addString(String string) {
 		String previousString = getSelectedFormulaText();
-		Project currentProject = ProjectManager.getInstance().getCurrentProject();
-		Sprite currentSprite = ProjectManager.getInstance().getCurrentSprite();
+		Project currentProject = projectManager.getValue().getCurrentProject();
+		Sprite currentSprite = projectManager.getValue().getCurrentSprite();
 		Context context = getContext();
 		if (context != null) {
 			boolean doNotShowWarning = false;
@@ -792,8 +796,8 @@ public class FormulaEditorFragment extends Fragment implements ViewTreeObserver.
 	}
 
 	private Scope generateScope() {
-		Project project = ProjectManager.getInstance().getCurrentProject();
-		Sprite sprite = ProjectManager.getInstance().getCurrentSprite();
+		Project project = projectManager.getValue().getCurrentProject();
+		Sprite sprite = projectManager.getValue().getCurrentSprite();
 		ScriptSequenceAction sequence = null;
 		Script script = formulaBrick.getScript();
 		if (script instanceof UserDefinedScript) {
@@ -870,8 +874,8 @@ public class FormulaEditorFragment extends Fragment implements ViewTreeObserver.
 	}
 
 	private boolean hasFileChanged() {
-		File currentCodeFile = new File(ProjectManager.getInstance().getCurrentProject().getDirectory(), CODE_XML_FILE_NAME);
-		File undoCodeFile = new File(ProjectManager.getInstance().getCurrentProject().getDirectory(), UNDO_CODE_XML_FILE_NAME);
+		File currentCodeFile = new File(projectManager.getValue().getCurrentProject().getDirectory(), CODE_XML_FILE_NAME);
+		File undoCodeFile = new File(projectManager.getValue().getCurrentProject().getDirectory(), UNDO_CODE_XML_FILE_NAME);
 
 		if (currentCodeFile.exists() && undoCodeFile.exists()) {
 			try {
@@ -904,7 +908,7 @@ public class FormulaEditorFragment extends Fragment implements ViewTreeObserver.
 
 		ScriptFragment fragment = (ScriptFragment) getActivity().getSupportFragmentManager().findFragmentByTag(ScriptFragment.TAG);
 
-		XstreamSerializer.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+		XstreamSerializer.getInstance().saveProject(projectManager.getValue().getCurrentProject());
 
 		if (hasFileChanged() || fragment.checkVariables()) {
 			((SpriteActivity) getActivity()).setUndoMenuItemVisibility(true);
@@ -996,7 +1000,7 @@ public class FormulaEditorFragment extends Fragment implements ViewTreeObserver.
 		boolean requiresCollisionPolygons = resource == R.string.formula_editor_function_collides_with_edge
 				|| resource == R.string.formula_editor_function_touched;
 		if (requiresCollisionPolygons) {
-			ProjectManager.getInstance().getCurrentSprite().createCollisionPolygons();
+			projectManager.getValue().getCurrentSprite().createCollisionPolygons();
 		}
 	}
 

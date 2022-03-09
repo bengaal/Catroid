@@ -35,6 +35,8 @@ import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
 
+import static org.koin.java.KoinJavaComponent.inject;
+
 public class ConditionScriptTrigger {
 	@Retention(RetentionPolicy.SOURCE)
 	@IntDef({TRIGGER_NOW, ALREADY_TRIGGERED})
@@ -55,7 +57,8 @@ public class ConditionScriptTrigger {
 
 	void evaluateAndTriggerActions(Sprite sprite) {
 		try {
-			Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, null);
+			final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+			Scope scope = new Scope(projectManager.getCurrentProject(), sprite, null);
 			boolean conditionValue = formula.interpretBoolean(scope);
 			if (conditionValue) {
 				triggerScript(sprite);

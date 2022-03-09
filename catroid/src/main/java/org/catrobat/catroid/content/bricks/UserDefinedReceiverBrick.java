@@ -43,6 +43,9 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class UserDefinedReceiverBrick extends ScriptBrickBaseType implements BrickSpinner.OnItemSelectedListener<StringOption> {
 
@@ -96,7 +99,8 @@ public class UserDefinedReceiverBrick extends ScriptBrickBaseType implements Bri
 		super.getView(context);
 		userBrickSpace = view.findViewById(R.id.user_brick_space);
 		if (userDefinedBrick == null) {
-			Sprite currentSprite = ProjectManager.getInstance().getCurrentSprite();
+			final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+			Sprite currentSprite = projectManager.getValue().getCurrentSprite();
 			userDefinedBrick = currentSprite.getUserDefinedBrickByID(userDefinedScript.getUserDefinedBrickID());
 		}
 		if (userDefinedBrick != null) {

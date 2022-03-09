@@ -28,6 +28,10 @@ import org.catrobat.catroid.content.bricks.WhenBounceOffBrick;
 import org.catrobat.catroid.content.eventids.BounceOffEventId;
 import org.catrobat.catroid.content.eventids.EventId;
 
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
+
 public class WhenBounceOffScript extends Script {
 
 	private static final long serialVersionUID = 1L;
@@ -56,7 +60,8 @@ public class WhenBounceOffScript extends Script {
 
 	public void setSpriteToBounceOffName(String spriteToCollideWithName) {
 		this.spriteToBounceOffName = spriteToCollideWithName;
-		updateSpriteToCollideWith(ProjectManager.getInstance().getCurrentlyEditedScene());
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		updateSpriteToCollideWith(projectManager.getValue().getCurrentlyEditedScene());
 	}
 
 	public void updateSpriteToCollideWith(Scene scene) {

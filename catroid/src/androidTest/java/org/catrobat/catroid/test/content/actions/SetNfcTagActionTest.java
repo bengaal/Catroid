@@ -38,10 +38,12 @@ import java.nio.charset.Charset;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static junit.framework.Assert.assertEquals;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(AndroidJUnit4.class)
 public class SetNfcTagActionTest {
@@ -65,7 +67,8 @@ public class SetNfcTagActionTest {
 	@Before
 	public void setUp() throws Exception {
 		project = new Project(ApplicationProvider.getApplicationContext(), "testProject");
-		ProjectManager.getInstance().setCurrentProject(project);
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		projectManager.setCurrentProject(project);
 	}
 
 	@Test

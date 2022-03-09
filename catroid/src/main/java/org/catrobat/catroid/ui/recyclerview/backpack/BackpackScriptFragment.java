@@ -38,6 +38,9 @@ import org.catrobat.catroid.utils.ToastUtil;
 import java.util.List;
 
 import androidx.annotation.PluralsRes;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class BackpackScriptFragment extends BackpackRecyclerViewFragment<String> {
 
@@ -56,7 +59,8 @@ public class BackpackScriptFragment extends BackpackRecyclerViewFragment<String>
 	protected void unpackItems(List<String> selectedItems) {
 		setShowProgressBar(true);
 		int unpackedItemCnt = 0;
-		Sprite sprite = ProjectManager.getInstance().getCurrentSprite();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		Sprite sprite = projectManager.getValue().getCurrentSprite();
 
 		for (String item : selectedItems) {
 			List<UserDefinedBrick> userDefinedBricks = BackpackListManager.getInstance().getBackpackedUserDefinedBricks().get(item);

@@ -42,6 +42,9 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import kotlin.Lazy;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class SetLookBrick extends BrickBaseType implements BrickSpinner.OnItemSelectedListener<LookData>,
 		NewItemInterface<LookData> {
@@ -123,6 +126,7 @@ public class SetLookBrick extends BrickBaseType implements BrickSpinner.OnItemSe
 	}
 
 	protected Sprite getSprite() {
-		return ProjectManager.getInstance().getCurrentSprite();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		return projectManager.getValue().getCurrentSprite();
 	}
 }

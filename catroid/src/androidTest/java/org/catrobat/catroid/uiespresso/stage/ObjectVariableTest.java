@@ -59,8 +59,11 @@ import java.util.List;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static junit.framework.Assert.assertEquals;
+
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(AndroidJUnit4.class)
 public class ObjectVariableTest {
@@ -113,12 +116,13 @@ public class ObjectVariableTest {
 
 	private void createProject(String projectName) {
 		Project project = new Project(ApplicationProvider.getApplicationContext(), projectName);
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentlyEditedScene(project.getDefaultScene());
-		ProjectManager.getInstance().getCurrentlyEditedScene().addSprite(new Sprite("sprite1"));
-		ProjectManager.getInstance().getCurrentlyEditedScene().addSprite(new Sprite("sprite2"));
-		ProjectManager.getInstance().getCurrentlyEditedScene().addSprite(new Sprite("sprite3"));
-		ProjectManager.getInstance().getCurrentlyEditedScene().addSprite(new Sprite("sprite4"));
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentlyEditedScene(project.getDefaultScene());
+		projectManager.getValue().getCurrentlyEditedScene().addSprite(new Sprite("sprite1"));
+		projectManager.getValue().getCurrentlyEditedScene().addSprite(new Sprite("sprite2"));
+		projectManager.getValue().getCurrentlyEditedScene().addSprite(new Sprite("sprite3"));
+		projectManager.getValue().getCurrentlyEditedScene().addSprite(new Sprite("sprite4"));
 
 		Sprite sprite = new Sprite("sprite5");
 		StartScript startScript = new StartScript();
@@ -147,8 +151,8 @@ public class ObjectVariableTest {
 
 		sprite.addScript(startScript);
 
-		ProjectManager.getInstance().getCurrentlyEditedScene().addSprite(sprite);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
+		projectManager.getValue().getCurrentlyEditedScene().addSprite(sprite);
+		projectManager.getValue().setCurrentSprite(sprite);
 
 		lastBrickInScript = ScriptEvaluationGateBrick.appendToScript(startScript);
 	}

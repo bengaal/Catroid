@@ -44,6 +44,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.uiespresso.content.brick.utils.BrickDataInteractionWrapper.onBrickAtPosition;
 import static org.catrobat.catroid.uiespresso.content.brick.utils.ColorPickerInteractionWrapper.onColorPickerPresetButton;
@@ -52,6 +53,7 @@ import static org.catrobat.catroid.uiespresso.formulaeditor.utils.FormulaEditorW
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
@@ -73,6 +75,8 @@ public class FormulaEditorUndoTest {
 	private static final int VARIABLE_VALUE = 5;
 	private static final String NEW_VARIABLE_VALUE = "10";
 	UserVariable userVariable;
+	
+	private final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 
 	@Rule
 	public FragmentActivityTestRule<SpriteActivity> baseActivityTestRule = new
@@ -89,7 +93,7 @@ public class FormulaEditorUndoTest {
 		Script script = BrickTestUtils.createProjectAndGetStartScript(FormulaEditorUndoTest.class.getName());
 		script.addBrick(new PlaceAtBrick());
 		userVariable = new UserVariable(VARIABLE_NAME, VARIABLE_VALUE);
-		ProjectManager.getInstance().getCurrentProject().addUserVariable(userVariable);
+		projectManager.getValue().getCurrentProject().addUserVariable(userVariable);
 		script.addBrick(new SetVariableBrick(new Formula(0), userVariable));
 		baseActivityTestRule.launchActivity();
 	}
@@ -225,7 +229,7 @@ public class FormulaEditorUndoTest {
 		onView(withId(R.id.menu_undo))
 				.check(doesNotExist());
 
-		assertNull(ProjectManager.getInstance().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
+		assertNull(projectManager.getValue().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
 
 		onBrickAtPosition(brickPosition).checkShowsText(R.string.brick_place_at);
 
@@ -248,7 +252,7 @@ public class FormulaEditorUndoTest {
 		onView(withId(R.id.menu_undo))
 				.check(matches(isDisplayed()));
 
-		assertNotNull(ProjectManager.getInstance().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
+		assertNotNull(projectManager.getValue().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
 	}
 
 	@Category({Cat.AppUi.class, Level.Smoke.class})
@@ -280,10 +284,10 @@ public class FormulaEditorUndoTest {
 		onView(withId(R.id.menu_undo))
 				.check(doesNotExist());
 
-		assertNotNull(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME));
+		assertNotNull(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME));
 
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), VARIABLE_VALUE);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), VARIABLE_VALUE);
 	}
 
 	@Category({Cat.AppUi.class, Level.Smoke.class})
@@ -311,10 +315,10 @@ public class FormulaEditorUndoTest {
 		onView(withId(R.id.menu_undo))
 				.check(matches(isDisplayed()));
 
-		assertNull(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME));
-		assertNotNull(ProjectManager.getInstance().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME), userVariable);
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME).getValue(), VARIABLE_VALUE);
+		assertNull(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME));
+		assertNotNull(projectManager.getValue().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME), userVariable);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME).getValue(), VARIABLE_VALUE);
 
 		onView(withId(R.id.menu_undo))
 				.perform(click());
@@ -322,10 +326,10 @@ public class FormulaEditorUndoTest {
 		onView(withId(R.id.menu_undo))
 				.check(doesNotExist());
 
-		assertNull(ProjectManager.getInstance().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
-		assertNotNull(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME));
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), VARIABLE_VALUE);
+		assertNull(projectManager.getValue().getCurrentProject().getUserVariable(NEW_VARIABLE_NAME));
+		assertNotNull(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME));
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), VARIABLE_VALUE);
 	}
 
 	@Category({Cat.AppUi.class, Level.Smoke.class})
@@ -352,16 +356,16 @@ public class FormulaEditorUndoTest {
 		onView(withId(R.id.menu_undo))
 				.check(matches(isDisplayed()));
 
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), NEW_VARIABLE_VALUE);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), NEW_VARIABLE_VALUE);
 
 		onView(withId(R.id.menu_undo))
 				.perform(click());
 		onView(withId(R.id.menu_undo))
 				.check(doesNotExist());
 
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
-		assertEquals(ProjectManager.getInstance().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), VARIABLE_VALUE);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME), userVariable);
+		assertEquals(projectManager.getValue().getCurrentProject().getUserVariable(VARIABLE_NAME).getValue(), VARIABLE_VALUE);
 	}
 
 	@Category({Cat.AppUi.class, Level.Smoke.class})

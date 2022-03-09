@@ -53,6 +53,8 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.List;
 
+import kotlin.Lazy;
+
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_WIFI_STATE;
@@ -65,6 +67,7 @@ import static android.Manifest.permission.NFC;
 import static android.Manifest.permission.RECORD_AUDIO;
 
 import static org.junit.Assert.assertTrue;
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(Parameterized.class)
 public class BrickPermissionTest {
@@ -105,7 +108,8 @@ public class BrickPermissionTest {
 		scene.addSprite(sprite);
 		script = new StartScript();
 		sprite.addScript(script);
-		ProjectManager.getInstance().setCurrentProject(project);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
 	}
 
 	@Test

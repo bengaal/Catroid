@@ -56,12 +56,14 @@ import java.io.File;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import kotlin.Lazy;
 
 import static junit.framework.TestCase.assertEquals;
 
 import static org.catrobat.catroid.common.Constants.IMAGE_DIRECTORY_NAME;
 import static org.catrobat.catroid.common.Constants.SOUND_DIRECTORY_NAME;
 import static org.catrobat.catroid.uiespresso.ui.fragment.rvutils.RecyclerViewInteractionWrapper.onRecyclerView;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -110,12 +112,14 @@ public class CopySceneTest {
 
 		onView(withText(toBeCopiedSceneName + " (2)"))
 				.check(matches(isDisplayed()));
+
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
 		int copiedSceneSpritesCount =
-				ProjectManager.getInstance().getCurrentProject().getSceneList().get(2).getSpriteList().size();
+				projectManager.getValue().getCurrentProject().getSceneList().get(2).getSpriteList().size();
 		int copiedSceneLooksCount =
-				ProjectManager.getInstance().getCurrentProject().getSceneList().get(2).getSpriteList().get(1).getLookList().size();
+				projectManager.getValue().getCurrentProject().getSceneList().get(2).getSpriteList().get(1).getLookList().size();
 		int copiedSceneSoundFilesCount =
-				ProjectManager.getInstance().getCurrentProject().getSceneList().get(2).getSpriteList().get(1).getSoundList().size();
+				projectManager.getValue().getCurrentProject().getSceneList().get(2).getSpriteList().get(1).getSoundList().size();
 
 		assertEquals(2, copiedSceneSpritesCount);
 		assertEquals(1, copiedSceneLooksCount);
@@ -123,15 +127,15 @@ public class CopySceneTest {
 	}
 
 	private void createProject(Context context, String projectName) throws Exception {
-
 		Project project = new Project(context, projectName);
 		Sprite sprite = new Sprite("firstSprite");
 		project.getDefaultScene().addSprite(sprite);
 		Scene scene2 = new Scene("Scene (1)", project);
 		project.addScene(scene2);
 
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
+		projectManager.getValue().setCurrentSprite(sprite);
 		XstreamSerializer.getInstance().saveProject(project);
 
 		Script script = new StartScript();

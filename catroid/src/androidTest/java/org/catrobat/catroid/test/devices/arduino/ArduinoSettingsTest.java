@@ -45,11 +45,13 @@ import java.io.IOException;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import kotlin.Lazy;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 import static org.catrobat.catroid.io.asynctask.ProjectSaverKt.saveProjectSerial;
+import static org.koin.java.KoinJavaComponent.inject;
 
 @RunWith(AndroidJUnit4.class)
 public class ArduinoSettingsTest {
@@ -79,7 +81,8 @@ public class ArduinoSettingsTest {
 
 		assertFalse(SettingsFragment.isArduinoSharedPreferenceEnabled(context));
 
-		ProjectManager.getInstance().loadProject(project.getDirectory(), context);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().loadProject(project.getDirectory());
 
 		assertTrue(SettingsFragment.isArduinoSharedPreferenceEnabled(context));
 
@@ -97,7 +100,8 @@ public class ArduinoSettingsTest {
 
 		project.getDefaultScene().addSprite(sprite);
 
-		ProjectManager.getInstance().setCurrentProject(project);
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		projectManager.getValue().setCurrentProject(project);
 		saveProjectSerial(project, ApplicationProvider.getApplicationContext());
 	}
 }

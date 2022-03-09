@@ -45,6 +45,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.test.core.app.ApplicationProvider;
 
+import static org.koin.java.KoinJavaComponent.inject;
+
 import static androidx.test.espresso.web.assertion.WebViewAssertions.webContent;
 import static androidx.test.espresso.web.matcher.DomMatchers.hasElementWithXpath;
 import static androidx.test.espresso.web.sugar.Web.onWebView;
@@ -119,7 +121,8 @@ public class AddBrickCatblocksTest {
 		Script startScript = new StartScript();
 		sprite.addScript(startScript);
 
-		ProjectManager.getInstance().setCurrentProject(project);
-		ProjectManager.getInstance().setCurrentSprite(sprite);
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
+		projectManager.setCurrentProject(project);
+		projectManager.setCurrentSprite(sprite);
 	}
 }

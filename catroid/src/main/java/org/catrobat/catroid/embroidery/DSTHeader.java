@@ -29,7 +29,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 
+import kotlin.Lazy;
+
 import static org.catrobat.catroid.embroidery.DSTFileConstants.toEmbroideryUnit;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public class DSTHeader implements EmbroideryHeader {
 	private float minX;
@@ -89,7 +92,8 @@ public class DSTHeader implements EmbroideryHeader {
 		final int my = 0;
 		final String pd = "*****";
 		StringBuilder stringBuilder = new StringBuilder();
-		String label = ProjectManager.getInstance().getCurrentProject().getName();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		String label = projectManager.getValue().getCurrentProject().getName();
 		if (label.length() > 15) {
 			label = label.substring(0, 15);
 		}

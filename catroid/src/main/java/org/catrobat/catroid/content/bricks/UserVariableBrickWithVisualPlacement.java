@@ -45,6 +45,7 @@ import java.util.List;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import kotlin.Lazy;
 
 import static org.catrobat.catroid.ui.SpriteActivity.EXTRA_TEXT;
 import static org.catrobat.catroid.ui.SpriteActivity.EXTRA_TEXT_ALIGNMENT;
@@ -54,6 +55,7 @@ import static org.catrobat.catroid.utils.ShowTextUtils.ALIGNMENT_STYLE_CENTERED;
 import static org.catrobat.catroid.utils.ShowTextUtils.convertColorToString;
 import static org.catrobat.catroid.utils.ShowTextUtils.getStringAsInteger;
 import static org.catrobat.catroid.utils.ShowTextUtils.isNumberAndInteger;
+import static org.koin.java.KoinJavaComponent.inject;
 
 public abstract class UserVariableBrickWithVisualPlacement extends VisualPlacementBrick implements UserVariableBrickInterface {
 
@@ -85,13 +87,14 @@ public abstract class UserVariableBrickWithVisualPlacement extends VisualPlaceme
 	public View getView(Context context) {
 		super.getView(context);
 
-		Sprite sprite = ProjectManager.getInstance().getCurrentSprite();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		Sprite sprite = projectManager.getValue().getCurrentSprite();
 
 		List<Nameable> items = new ArrayList<>();
 		items.add(new NewOption(context.getString(R.string.new_option)));
 		items.addAll(sprite.getUserVariables());
-		items.addAll(ProjectManager.getInstance().getCurrentProject().getUserVariables());
-		items.addAll(ProjectManager.getInstance().getCurrentProject().getMultiplayerVariables());
+		items.addAll(projectManager.getValue().getCurrentProject().getUserVariables());
+		items.addAll(projectManager.getValue().getCurrentProject().getMultiplayerVariables());
 
 		spinner = new BrickSpinner<>(getSpinnerId(), view, items);
 		spinner.setOnItemSelectedListener(this);
@@ -106,8 +109,9 @@ public abstract class UserVariableBrickWithVisualPlacement extends VisualPlaceme
 			return;
 		}
 
-		final Project currentProject = ProjectManager.getInstance().getCurrentProject();
-		final Sprite currentSprite = ProjectManager.getInstance().getCurrentSprite();
+		final Lazy<ProjectManager> projectManager = inject(ProjectManager.class);
+		final Project currentProject = projectManager.getValue().getCurrentProject();
+		final Sprite currentSprite = projectManager.getValue().getCurrentSprite();
 
 		UserVariableBrickTextInputDialogBuilder builder =
 				new UserVariableBrickTextInputDialogBuilder(currentProject, currentSprite, userVariable, activity, spinner);

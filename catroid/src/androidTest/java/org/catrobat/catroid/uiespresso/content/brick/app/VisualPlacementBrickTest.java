@@ -62,6 +62,7 @@ import androidx.test.espresso.intent.Intents;
 
 import static org.catrobat.catroid.uiespresso.content.brick.utils.BrickDataInteractionWrapper.onBrickAtPosition;
 import static org.catrobat.catroid.uiespresso.formulaeditor.utils.FormulaEditorWrapper.onFormulaEditor;
+import static org.koin.java.KoinJavaComponent.inject;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
@@ -136,7 +137,7 @@ public class VisualPlacementBrickTest {
 		Project project = new Project(ApplicationProvider.getApplicationContext(), VisualPlacementBrickTest.class.getSimpleName());
 		Sprite sprite = new Sprite("testSprite");
 		Script script = new StartScript();
-		ProjectManager projectManager = ProjectManager.getInstance();
+		final ProjectManager projectManager = inject(ProjectManager.class).getValue();
 
 		userVariable = new UserVariable("userVariable");
 		sprite.addScript(script);
