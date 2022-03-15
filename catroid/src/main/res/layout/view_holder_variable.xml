@@ -52,12 +52,12 @@
             android:id="@+id/title_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:paddingEnd="@dimen/details_spacing"
             android:textColor="@color/view_holder_item_title"
             android:textSize="?attr/large"
             android:minWidth="@dimen/data_view_space"
-            android:ellipsize="end"
             android:maxLines="1"/>
 
         <TextView
@@ -66,9 +66,10 @@
             android:layout_height="wrap_content"
             android:minWidth="@dimen/data_view_space"
             android:layout_weight="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="@color/solid_white"
             android:textSize="?attr/large"
-            android:ellipsize="end"
             android:maxLines="1"/>
 
            <ImageButton

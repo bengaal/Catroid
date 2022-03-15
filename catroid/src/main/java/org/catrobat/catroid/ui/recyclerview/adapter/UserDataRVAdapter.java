@@ -23,6 +23,7 @@
 
 package org.catrobat.catroid.ui.recyclerview.adapter;
 
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ public class UserDataRVAdapter<T extends UserData> extends RVAdapter<T> {
 		super(items);
 	}
 
+	private final double MINIMUM_ELEMENT_RATIO = 0.2;
+
 	@Override
 	public CheckableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
@@ -55,15 +58,36 @@ public class UserDataRVAdapter<T extends UserData> extends RVAdapter<T> {
 	public void onBindViewHolder(CheckableViewHolder holder, int position) {
 		super.onBindViewHolder(holder, position);
 
-		UserData item = items.get(position);
-		VariableViewHolder variableViewHolder = (VariableViewHolder) holder;
-		variableViewHolder.title.setText(item.getName());
-		variableViewHolder.value.setText(convertObjectToString(item.getValue()));
 		ImageButton settings = holder.itemView.findViewById(R.id.settings_button);
 		if (settings != null && showSettings) {
 			settings.setVisibility(View.VISIBLE);
 		} else if (settings != null && !showSettings) {
 			settings.setVisibility(View.GONE);
 		}
+
+		UserData item = items.get(position);
+		VariableViewHolder variableViewHolder = (VariableViewHolder) holder;
+		double widthPixels = Resources.getSystem().getDisplayMetrics().widthPixels;
+		double titleLength = item.getName().length();
+		double valueLength = item.getValue().toString().length();
+
+		variableViewHolder.title.setText(item.getName());
+		double screenWidth = widthPixels * 0.85;
+		double titleWidth = (titleLength / (titleLength + valueLength)) * screenWidth;
+
+		variableViewHolder.value.setText(convertObjectToString(item.getValue()));
+		double valueWidth =
+				(valueLength / (titleLength + valueLength)) * screenWidth;
+		if(titleWidth < MINIMUM_ELEMENT_RATIO * screenWidth) {
+			titleWidth = MINIMUM_ELEMENT_RATIO * screenWidth;
+			valueWidth = (1 - MINIMUM_ELEMENT_RATIO) * screenWidth;
+		}
+		if(valueWidth < MINIMUM_ELEMENT_RATIO * screenWidth) {
+			titleWidth = (1 - MINIMUM_ELEMENT_RATIO) * screenWidth;
+			valueWidth = MINIMUM_ELEMENT_RATIO * screenWidth;
+		}
+
+		variableViewHolder.title.setWidth((int)Math.floor(titleWidth));
+		variableViewHolder.value.setWidth((int)Math.floor(valueWidth));
 	}
 }
