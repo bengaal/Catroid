@@ -55,9 +55,7 @@ import android.database.Cursor
 import org.catrobat.catroid.utils.setVisibleOrGone
 
 class BrickSearchFragment : ListFragment() {
-
     private var previousActionBarTitle: CharSequence? = null
-
     private var searchView: SearchView? = null
     private var recentlyUsedTitle: TextView? = null
     private var queryTextListener: SearchView.OnQueryTextListener? = null
@@ -68,7 +66,7 @@ class BrickSearchFragment : ListFragment() {
     private var addBrickListener: AddBrickFragment.OnAddBrickListener? = null
     private var category: String? = null
     private var adapter: PrototypeBrickAdapter? = null
-    @Volatile private var emptyQuery: Boolean = true
+    @Volatile private var isQueryEmpty: Boolean = true
     @Volatile private var previousQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -120,11 +118,8 @@ class BrickSearchFragment : ListFragment() {
         adapter = PrototypeBrickAdapter(searchResults)
         listAdapter = adapter
         listView.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScrollStateChanged(
-                view: AbsListView,
-                scrollState: Int
-            ) {
-                    searchView.hideKeyboard()
+            override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
+                searchView.hideKeyboard()
             }
 
             @SuppressWarnings("EmptyFunctionBlock")
@@ -159,7 +154,7 @@ class BrickSearchFragment : ListFragment() {
                                 }
                             }
                         }
-                        emptyQuery = query.isEmpty()
+                        isQueryEmpty = query.isEmpty()
                         if (query.isEmpty()) {
                             searchResults.clear()
                             searchResults.addAll(recentlyUsedBricks)
@@ -206,17 +201,17 @@ class BrickSearchFragment : ListFragment() {
     }
 
     private fun setShowProgressBar(visible: Boolean) {
-            if (visible) {
-                view?.findViewById<ProgressBar>(R.id.progress_bar)?.visibility = View.VISIBLE
-            } else {
-                view?.findViewById<ProgressBar>(R.id.progress_bar)?.visibility = View.INVISIBLE
-            }
+        if (visible) {
+            view?.findViewById<ProgressBar>(R.id.progress_bar)?.visibility = View.VISIBLE
+        } else {
+            view?.findViewById<ProgressBar>(R.id.progress_bar)?.visibility = View.INVISIBLE
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         for (index in 0 until menu.size()) {
-            menu.getItem(index).setVisible(false)
+            menu.getItem(index).isVisible = false
         }
         menu.findItem(R.id.search_bar).isVisible = true
     }
@@ -225,7 +220,7 @@ class BrickSearchFragment : ListFragment() {
 
     private fun searchAndFillBrickList(query: String) {
         searchResults.clear()
-        if (emptyQuery) {
+        if (isQueryEmpty) {
             return
         }
         adapter?.replaceList(searchResults)
@@ -236,7 +231,7 @@ class BrickSearchFragment : ListFragment() {
                 context?.getString(R.string.no_results_found)
             )
         }
-        if (emptyQuery) {
+        if (isQueryEmpty) {
             return
         }
         adapter?.replaceList(searchResults)
@@ -252,6 +247,7 @@ class BrickSearchFragment : ListFragment() {
             }
         }
     }
+
     private fun searchResultContains(brick: Brick): Boolean {
         searchResults.forEach {
             if (brick.javaClass == it.javaClass) {
@@ -270,10 +266,10 @@ class BrickSearchFragment : ListFragment() {
                 if (stringFoundInBrick.isNotBlank()) wholeStringFoundInBrick = wholeStringFoundInBrick.plus(stringFoundInBrick)
             }
         } else if (view is TextView) return view.text.toString().toLowerCase(Locale.ROOT)
-        return wholeStringFoundInBrick
-        }
+            return wholeStringFoundInBrick
+    }
 
-    fun getRecentlyUsedBricks() {
+    private fun getRecentlyUsedBricks() {
         val categoryBricksFactory: CategoryBricksFactory = when {
             onlyBeginnerBricks() -> CategoryBeginnerBricksFactory()
             else -> CategoryBricksFactory()
